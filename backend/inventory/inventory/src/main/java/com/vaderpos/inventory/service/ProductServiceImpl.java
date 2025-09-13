@@ -1,0 +1,95 @@
+package com.vaderpos.inventory.service;
+
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.repository.ProductRepository;
+import java.util.List;
+import java.util.Optional;
+import java.math.BigDecimal;
+import com.vaderpos.inventory.api.model.Product;
+
+@Service
+public class ProductServiceImpl implements ProductService {
+
+    private final ProductRepository productRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Override
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ProductDTO> getProduct(Long id) {
+        return productRepository.findById(id)
+            .map(this::convertToDTO);
+    }
+
+    // @Override
+    // public ProductDTO createProduct(ProductDTO productDTO) {
+    //     Product product = new Product();
+    //     product.setProductName(productDTO.productName());
+    //     product.setQuantity(productDTO.quantity());
+    //     product.setPrice(BigDecimal.valueOf(productDTO.price()));
+    //     product.setCategoryId(productDTO.categoryId());
+    //     Product savedProduct = productRepository.save(product);
+    //     return convertToDTO(savedProduct);
+    // }
+
+    @Override
+    public ProductDTO createProduct(ProductDTO productDTO) {
+        Product product = convertToEntity(productDTO);
+        Product savedProduct = productRepository.save(product);
+        return convertToDTO(savedProduct);
+    }
+
+    @Override
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        Optional<Product> existingProductOpt = productRepository.findById(id);
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+            existingProduct.setProductName(productDTO.productName());
+            existingProduct.setQuantity(productDTO.quantity());
+            existingProduct.setPrice(BigDecimal.valueOf(productDTO.price()));
+            existingProduct.setCategoryId(productDTO.categoryId());
+            Product updatedProduct = productRepository.save(existingProduct);
+            return convertToDTO(updatedProduct);
+        } else {
+            throw new RuntimeException("Product not found");
+        }
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    private ProductDTO convertToDTO(Product product) {
+        return new ProductDTO(
+            product.getProductId(),
+            product.getProductName(),
+            product.getQuantity(),
+            product.getPrice().doubleValue(),
+            product.getCategoryId()
+        );
+    }
+
+    private Product convertToEntity(ProductDTO productDTO) {
+        Product product = new Product();
+        product.setProductName(productDTO.productName());
+        product.setQuantity(productDTO.quantity());
+        product.setPrice(BigDecimal.valueOf(productDTO.price()));
+        product.setCategoryId(productDTO.categoryId());
+        return product;
+    }
+
+}
+
