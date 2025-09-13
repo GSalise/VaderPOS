@@ -12,7 +12,7 @@ namespace SalesSystem.Controllers
         private readonly DatabaseContext _context;
         private readonly ICustomerRepository _customerRepository;
 
-        public AnimalController(DatabaseContext context, ICustomerRepository customerRepository)
+        public CustomerController(DatabaseContext context, ICustomerRepository customerRepository)
         {
             _context = context;
             _customerRepository = customerRepository;
@@ -20,7 +20,7 @@ namespace SalesSystem.Controllers
 
         [HttpGet]
         [Route("getAllCustomers")]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> GetAllCustomers()
         {
             var customers = await _customerRepository.GetAllCustomers();
