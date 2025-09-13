@@ -3628,11 +3628,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.csproj",
+      "projectUniqueName": "C:\\Users\\Lenovo\\Downloads\\integ\\backend\\SalesSystem\\SalesSystem.csproj",
       "projectName": "SalesSystem",
-      "projectPath": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.csproj",
+      "projectPath": "C:\\Users\\Lenovo\\Downloads\\integ\\backend\\SalesSystem\\SalesSystem.csproj",
       "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\obj\\",
+      "outputPath": "C:\\Users\\Lenovo\\Downloads\\integ\\backend\\SalesSystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
