@@ -1,0 +1,154 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:data\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\salessystem.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:salessystem.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\models\\orderproducts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:models\\orderproducts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\models\\customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:models\\customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|c:\\users\\lenovo\\downloads\\it3206n\\vaderpos\\salessystem\\salessystem\\salessystem.db||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{FA228710-E227-5A71-A1FD-FD3BDE4858D2}|SalesSystem.csproj|solutionrelative:salessystem.db||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-13T06:07:27.149Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Customer.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\Customer.cs",
+              "RelativeDocumentMoniker": "Models\\Customer.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\Customer.cs",
+              "RelativeToolTip": "Models\\Customer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T08:38:17.219Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "OrderProducts.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\OrderProducts.cs",
+              "RelativeDocumentMoniker": "Models\\OrderProducts.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\OrderProducts.cs",
+              "RelativeToolTip": "Models\\OrderProducts.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvw8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T08:37:05.158Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "Models\\Order.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Models\\Order.cs",
+              "RelativeToolTip": "Models\\Order.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T08:31:06.825Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SalesSystem.csproj",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.csproj",
+              "RelativeDocumentMoniker": "SalesSystem.csproj",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.csproj",
+              "RelativeToolTip": "SalesSystem.csproj",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-06T08:47:18.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Data\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "Data\\DatabaseContext.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Data\\DatabaseContext.cs",
+              "RelativeToolTip": "Data\\DatabaseContext.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAqwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T08:47:44.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T06:07:56.524Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SalesSystem.db",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.db",
+              "RelativeDocumentMoniker": "SalesSystem.db",
+              "ToolTip": "C:\\Users\\Lenovo\\Downloads\\IT3206N\\VaderPOS\\SalesSystem\\SalesSystem\\SalesSystem.db",
+              "RelativeToolTip": "SalesSystem.db",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAD/DwAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIKSURBVDhPrZXfS1NhGMe/EynnCI7roG2w3OaOa4vMcgV2YQjdeWV3QlBmECQIYlMKVMRQYnhRiSQUhQjd9D\u002BsC3HJbhTaav7YHMdIsoGghW5nO72Op9yB98hJ\u002BsDhPc/7fPmc9z0HzmsC8WggmAJUJ5VHYFpXCmgPhUKLNHGIqqolwofqyOgYVfoMDz6G2Wze3vm518qTltH4T9zp7BJOWSrCwWCwkab\u002BcizhGZtdV3os4QF60nIauWxsbiGxJsMvOWGrthbnBEEovscShPIyhNlYdVBwhb/29rH0eQ3Z/Sx2dncRX0kimZYhuR3o7eun1CHsAQLd8rccW07h\u002B1YGhUIegQYf8nkF6Y1vkL9uUkIfrrDR54GiKPA4HXCdtcPrrmV1Dhd8EiX00VlhErlcFrHEKlaSaSzFl1mdw4f5KCX04QptNSL7CGJREp5bQJ6ttlqsQnPTRUrowxXWiFZcb25CA9tixckT8HvduNFyDSlZRvfAIBY/xfAjk6G0Fq7wD7UOOzputsFb58KLV2/x8s0sztd78GxqGtOvZyil5UhhKX6prih70HWbfZxzqJfc1NFiWBj/ksBCNIqJ55OYj3xkV4Q6WgwL797qQM/9e4gwWX9vD54MD1FHi2GheNqKwOVLeP9uFlevBGCxVFJHi2GhUf67sOSP3ceOAJOBI4CHuj7\u002BdMIFAL8B2kWpjQLikHsAAAAASUVORK5CYII=",
+              "WhenOpened": "2025-09-06T08:28:13.087Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
