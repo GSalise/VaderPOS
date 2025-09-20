@@ -17,7 +17,7 @@ namespace SalesSystem.Repositries
         {
             return await _context.customers.ToListAsync();
         }
-
+        
         public async Task<Customer> GetCustomerByIdAsync(int id)
         {
             var customer = await _context.customers.FindAsync(id);

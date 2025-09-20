@@ -1,13 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SalesSystem.Data;
+using SalesSystem.Interfaces;
+using SalesSystem.Repositries;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-
+builder.Services.AddScoped<ICustomerRepository,CustomerRepository>();
+builder.Services.AddScoped<IOrderRespository, OrderRepository>();
+builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 

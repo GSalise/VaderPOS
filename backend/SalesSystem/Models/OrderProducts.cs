@@ -10,6 +10,6 @@ namespace SalesSystem.Models
         public int Quantity { get; set; }
 
 
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
     }
 }

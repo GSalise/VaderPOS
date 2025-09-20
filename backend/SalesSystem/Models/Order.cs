@@ -7,7 +7,7 @@ namespace SalesSystem.Models
         public int CustomerId { get; set; }
         public DateTime OrderDate { get; set; }
 
-        public Customer Customer { get; set; }
+        public Customer? Customer { get; set; }
 
         public ICollection<OrderProducts>? OrderProducts { get; set; }
 
