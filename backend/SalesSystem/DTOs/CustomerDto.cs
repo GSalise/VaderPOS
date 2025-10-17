@@ -1,12 +1,9 @@
-﻿namespace SalesSystem.Models
+﻿namespace SalesSystem.DTOs
 {
-    public class Customer
+    public class CustomerDto
     {
         public int CustomerId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Contact_No { get; set; } = string.Empty;
-
-        public ICollection<Order>? Orders { get; set; }
     }
-        
 }

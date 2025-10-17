@@ -4,19 +4,22 @@ using SalesSystem.Data;
 using SalesSystem.Interfaces;
 using SalesSystem.Repositries;
 using SalesSystem.Models;
+using AutoMapper;
+using SalesSystem.DTOs;
+using System.Collections.Generic;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly DatabaseContext _context;
-        private readonly ICustomerRepository _customerRepository;
 
-        public CustomerController(DatabaseContext context, ICustomerRepository customerRepository)
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
+        public CustomerController( ICustomerRepository customerRepository, IMapper mapper)
         {
-            _context = context;
             _customerRepository = customerRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,27 +27,28 @@ namespace SalesSystem.Controllers
         
         public async Task<IActionResult> GetAllCustomers()
         {
-            var customers = await _customerRepository.GetAllCustomers();
+            var customers =_mapper.Map<List<CustomerDto>> (await _customerRepository.GetAllCustomers());
             return Ok(customers);
         }
 
-        [HttpGet("getcustomer/{id}")]
+        [HttpGet("getCustomer/{id}")]
         public async Task<IActionResult> GetCustomerById(int id) 
         {
-            var customer = await _customerRepository.GetCustomerByIdAsync(id);
+            var customer = _mapper.Map<CustomerDto>(await _customerRepository.GetCustomerByIdAsync(id));
 
             return customer == null ? NotFound() : Ok(customer);
         }
 
         [HttpPost]
         [Route("AddCustomer")]
-        public async Task<IActionResult> AddCustomer([FromBody]Customer customer)
+        public async Task<IActionResult> AddCustomer(CustomerDto customer)
         {
             if (customer == null)
             {
                 return BadRequest("Customer is null.");
             }
-            var createdCustomer = await _customerRepository.AddCustomerAsync(customer);
+            var customerEntity = _mapper.Map<Customer>(customer);
+            var createdCustomer = await _customerRepository.AddCustomerAsync(customerEntity);
             return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.CustomerId }, createdCustomer);
         }
 

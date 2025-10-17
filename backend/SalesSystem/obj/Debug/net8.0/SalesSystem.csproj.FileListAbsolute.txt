@@ -322,3 +322,6 @@ C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\obj\Debug\net8.0\staticwebas
 C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\obj\Debug\net8.0\SalesSys.5B7FCE65.Up2Date
 C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\obj\Debug\net8.0\SalesSystem.genruntimeconfig.cache
 C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\obj\Debug\net8.0\ref\SalesSystem.dll
+C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\Lenovo\Downloads\integ\backend\SalesSystem\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

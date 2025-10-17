@@ -4,34 +4,35 @@ using SalesSystem.Data;
 using SalesSystem.Interfaces;
 using SalesSystem.Repositries;
 using SalesSystem.Models;
-
+using SalesSystem.DTOs;
+using AutoMapper;
+using System.Collections.Generic;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly DatabaseContext _context;
         private readonly IOrderRespository _orderRepository;
-
-        public OrderController(DatabaseContext context, IOrderRespository orderRepository)
+        private readonly IMapper _mapper;
+        public OrderController( IOrderRespository orderRepository, IMapper mapper)
         {
-            _context = context;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("getAllOrders")]
         public async Task<IActionResult> GetAllOrders()
         {
-            var orders = await _orderRepository.GetAllOrdersAsync();
+            var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetAllOrdersAsync());
             return Ok(orders);
         }
 
         // GET: api/order/5
-        [HttpGet("{id}")]
+        [HttpGet("getOrderById/{id}")]
         public async Task<IActionResult> GetOrderById(int id)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(id);
+            var order = _mapper.Map<OrderDto>(await _orderRepository.GetOrderByIdAsync(id));
             if (order == null)
             {
                 return NotFound();
@@ -41,17 +42,18 @@ namespace SalesSystem.Controllers
 
         // POST: api/order
         [HttpPost]
-        public async Task<IActionResult> AddOrder([FromBody] Order order)
+        [Route("addOrder")]
+        public async Task<IActionResult> AddOrder([FromBody] OrderDto order)
         {
             if (order == null)
                 return BadRequest();
-
-            var createdOrder = await _orderRepository.AddOrderAsync(order);
+            var orderEntity = _mapper.Map<Order>(order);
+            var createdOrder =  await _orderRepository.AddOrderAsync(orderEntity);
             return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderId }, createdOrder);
         }
 
         // DELETE: api/order/5
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteOrder/{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var success = await _orderRepository.DeleteOrderAsync(id);
