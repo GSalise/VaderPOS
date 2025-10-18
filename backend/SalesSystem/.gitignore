@@ -40,6 +40,8 @@ artifacts/
 *.appxrecipe
 *.log
 *.json
+!appsettings.json  
+!appsettings.development.json  
 *.dbmdl
 *.bak
 *.FileListAbsolute.txt
