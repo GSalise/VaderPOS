@@ -1,22 +1,22 @@
-package com.vaderpos.inventory.service;
+package com.vaderpos.inventory.api.service;
 
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
-import com.vaderpos.inventory.api.repository.ProductRepository;
+import com.vaderpos.inventory.api.repository.IProductRepository;
 import java.util.List;
 import java.util.Optional;
 import java.math.BigDecimal;
 import com.vaderpos.inventory.api.model.Product;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements IProductService {
 
-    private final ProductRepository productRepository;
+    private final IProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(IProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

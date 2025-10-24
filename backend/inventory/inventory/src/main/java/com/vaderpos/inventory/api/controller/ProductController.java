@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.vaderpos.inventory.service.ProductService;
+
 import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.service.IProductService;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +27,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("api/products") // The base URL for all endpoints in this controller
 public class ProductController {
-    private final ProductService productService;
+    private final IProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(IProductService productService) {
         this.productService = productService;
     }
 
