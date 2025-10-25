@@ -1,0 +1,410 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\frontend\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\CustomerRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Repositries\\CustomerRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderProductRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Repositries\\OrderProductRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderRespository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Interfaces\\IOrderRespository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Repositries\\OrderRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Models\\Order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\CustomerController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Controllers\\CustomerController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Data\\DatabaseContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Data\\DatabaseContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Models\\Customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Properties\\launchSettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Properties\\launchSettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\OrderProducts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Models\\OrderProducts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Helper\\MapperProfile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Helper\\MapperProfile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\DTOs\\OrderDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderProductDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\DTOs\\OrderProductDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\CustomerDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\DTOs\\CustomerDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\OrderProductController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\SalesSystem\\Controllers\\OrderProductController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\resources\\application.properties||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\inventory\\inventory\\src\\main\\resources\\application.properties||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CustomerRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\CustomerRepository.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Repositries\\CustomerRepository.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\CustomerRepository.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Repositries\\CustomerRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T06:09:37.343Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\frontend\\index.html",
+              "RelativeDocumentMoniker": "frontend\\index.html",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\frontend\\index.html",
+              "RelativeToolTip": "frontend\\index.html",
+              "ViewState": "AgIAALsBAAAAAAAAAAAAwOEBAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2025-10-24T16:05:27.911Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "OrderProductRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderProductRepository.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Repositries\\OrderProductRepository.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderProductRepository.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Repositries\\OrderProductRepository.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACkAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:26:08.402Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "InventoryApplicationTests.java",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java",
+              "RelativeDocumentMoniker": "backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java",
+              "RelativeToolTip": "backend\\inventory\\inventory\\src\\test\\java\\com\\vaderpos\\inventory\\InventoryApplicationTests.java",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-24T15:24:55.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IOrderRespository.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderRespository.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Interfaces\\IOrderRespository.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderRespository.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Interfaces\\IOrderRespository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:03.161Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "OrderRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderRepository.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Repositries\\OrderRepository.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Repositries\\OrderRepository.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Repositries\\OrderRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:26:18.106Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Models\\Order.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Order.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Models\\Order.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:31.556Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Program.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Program.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Program.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Program.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAiwGAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T16:19:42.762Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CustomerController.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\CustomerController.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Controllers\\CustomerController.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\CustomerController.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Controllers\\CustomerController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T16:10:41.271Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Customer.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Customer.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Models\\Customer.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\Customer.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Models\\Customer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:32.911Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OrderProducts.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\OrderProducts.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Models\\OrderProducts.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Models\\OrderProducts.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Models\\OrderProducts.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:30.253Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Data\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Data\\DatabaseContext.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Data\\DatabaseContext.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Data\\DatabaseContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:28:00.456Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Properties\\launchSettings.json",
+              "RelativeToolTip": "backend\\SalesSystem\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-24T15:36:42.329Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "20250913062611_InitialCreate.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.Designer.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:11.902Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "20250913062611_InitialCreate.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Migrations\\20250913062611_InitialCreate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:08.296Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "IOrderProductRepository.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Interfaces\\IOrderProductRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:36:01.15Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "DatabaseContextModelSnapshot.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Migrations\\DatabaseContextModelSnapshot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:28:27.69Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "MapperProfile.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Helper\\MapperProfile.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Helper\\MapperProfile.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Helper\\MapperProfile.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Helper\\MapperProfile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:35:42.466Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "OrderDto.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderDto.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\DTOs\\OrderDto.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderDto.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\DTOs\\OrderDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:34:01.022Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "OrderProductDto.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderProductDto.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\DTOs\\OrderProductDto.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\OrderProductDto.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\DTOs\\OrderProductDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:33:59.585Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "OrderProductController.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\OrderProductController.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\Controllers\\OrderProductController.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\Controllers\\OrderProductController.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\Controllers\\OrderProductController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:31:19.248Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "CustomerDto.cs",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\CustomerDto.cs",
+              "RelativeDocumentMoniker": "backend\\SalesSystem\\DTOs\\CustomerDto.cs",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\SalesSystem\\DTOs\\CustomerDto.cs",
+              "RelativeToolTip": "backend\\SalesSystem\\DTOs\\CustomerDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-24T15:28:11.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "InventoryApplication.java",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java",
+              "RelativeDocumentMoniker": "backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java",
+              "RelativeToolTip": "backend\\inventory\\inventory\\src\\main\\java\\com\\vaderpos\\inventory\\InventoryApplication.java",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-24T15:24:39.036Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "application.properties",
+              "DocumentMoniker": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\resources\\application.properties",
+              "RelativeDocumentMoniker": "backend\\inventory\\inventory\\src\\main\\resources\\application.properties",
+              "ToolTip": "C:\\Users\\vonze\\OneDrive\\Desktop\\VaderPOS\\backend\\inventory\\inventory\\src\\main\\resources\\application.properties",
+              "RelativeToolTip": "backend\\inventory\\inventory\\src\\main\\resources\\application.properties",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-10-24T15:24:47.781Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

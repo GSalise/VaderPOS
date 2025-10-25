@@ -1,6 +1,7 @@
 package com.vaderpos.inventory.api.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin; // <-- import this
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +17,9 @@ import java.util.Optional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-// The controller handles HTTP requests for product-related operations
-// It uses the ProductService to perform business logic
-// The controller is annotated with @RestController and @RequestMapping to define the base URL for all endpoints
-// Each method is annotated with the appropriate HTTP method annotation (@GetMapping, @PostMapping, etc.)
-// The methods return ResponseEntity objects to provide appropriate HTTP responses
-
-
 @RestController
-@RequestMapping("api/products") // The base URL for all endpoints in this controller
+@RequestMapping("api/products") 
+@CrossOrigin(origins = "http://localhost:5500") // <-- allow frontend calls
 public class ProductController {
     private final IProductService productService;
 
@@ -59,5 +53,4 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }   
-
 }

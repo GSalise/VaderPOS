@@ -1,7 +1,14 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\backend",
+    "\\backend\\SalesSystem",
+    "\\backend\\SalesSystem\\Interfaces",
+    "\\backend\\SalesSystem\\Migrations",
+    "\\backend\\SalesSystem\\Models",
+    "\\backend\\SalesSystem\\Properties",
+    "\\backend\\SalesSystem\\Repositries",
+    "\\frontend"
   ],
-  "SelectedNode": "\\SalesSystem.sln",
   "PreviewInSolutionExplorer": false
 }
