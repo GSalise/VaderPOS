@@ -9,6 +9,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.model.Product;
 import com.vaderpos.inventory.api.service.IProductService;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
     // Executes when a client disconnects
     @Override
-    public void afterConnectionClosed(@NonNull WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
 
         // Print out the session ID and remove from the active connections list
@@ -56,8 +57,13 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         System.out.println("Received message from " +  session.getId() + ": " + payload);
         JSONObject jsonObject = new JSONObject(payload);
         long productId = jsonObject.getInt("productId");
-        int quantity = jsonObject.getInt("quantity");
         String action = jsonObject.getString("action");
+
+        Integer quantity = null;
+        if (jsonObject.has("quantity")) {
+            quantity = jsonObject.getInt("quantity");
+        }
+
 
            // Logic: getProduct
         JSONObject response = new JSONObject();
@@ -75,6 +81,40 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 response.put("status", "error");
                 response.put("message", "Product not found");
             }
+        } else if ("takeProductFromStock".equals(action)) {
+            try {
+                if(quantity != null) {
+                    productService.reduceProductStock(productId, quantity);
+                    Optional<ProductDTO> productOpt = productService.getProduct(productId);
+                    ProductDTO product = productOpt.get();
+                    response.put("status", "success");
+                    response.put("message", "Stock has been successfully reduced");
+                    response.put("productId", product.productId());
+                    response.put("remainingStock", product.quantity());
+                } else {
+                    response.put("status", "error");
+                    response.put("message", "Quantity is required for this action");
+                }
+            } catch (RuntimeException e) {
+                response.put("status", "error");
+                response.put("message", e.getMessage());
+            }
+
+
+
+            // if (productOpt.isPresent()) {
+            //     if(quantity != null) {
+            //         productService.reduceProductStock(productId, quantity);
+            //         ProductDTO product = productOpt.get();
+            //         response.put("status", "success");
+            //         response.put("message", "Stock has been successfully reduced");
+            //         response.put("productId", product.productId());
+            //         response.put("remainingStock", product.quantity());
+            //     } else {
+            //         response.put("status", "error");
+            //         response.put("message", "Quantity is required for this action");
+            //     }
+            // }
         } else {
             response.put("status", "error");
             response.put("message", "Unknown action");

@@ -72,6 +72,32 @@ public class ProductServiceImpl implements IProductService {
         productRepository.deleteById(id);
     }
 
+    @Override
+    public int checkProductStock(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            return productOpt.get().getQuantity();
+        } else {
+            throw new RuntimeException("Product not found");
+        }
+    }
+
+    @Override
+    public void reduceProductStock(Long id, int quantity) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            if (product.getQuantity() >= quantity){
+                product.setQuantity(product.getQuantity() - quantity);
+                productRepository.save(product);
+            } else {
+                throw new RuntimeException("Insufficient Stock");
+            }
+        }else{
+            throw new RuntimeException("Product not found");
+        }
+    }
+
     private ProductDTO convertToDTO(Product product) {
         return new ProductDTO(
             product.getProductId(),
