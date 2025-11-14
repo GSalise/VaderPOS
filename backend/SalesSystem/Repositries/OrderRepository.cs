@@ -50,19 +50,21 @@ namespace SalesSystem.Repositries
             if (order == null) {
                 throw new ArgumentNullException(nameof(order), "Order not found");
             }
-             await _context.orders.AddAsync(order);
+            order.isCheckedOut = false;
+            await _context.orders.AddAsync(order);
              await _context.SaveChangesAsync();
             return order;
         }
-        public async Task<Order> UpdateOrderAsync(Order order)
+        public async Task<Order> UpdateOrderAsync(int id, Order order)
         {
-            var orderToUpdate =   await _context.orders.FirstOrDefaultAsync(x => x.OrderId == order.OrderId);
+            var orderToUpdate =   await _context.orders.FirstOrDefaultAsync(x => x.OrderId == id);
             if (orderToUpdate == null)
             {
                 throw new ArgumentNullException(nameof(order), "Order not found");
             }
             orderToUpdate.CustomerId = order.CustomerId;
             orderToUpdate.OrderDate = order.OrderDate;
+            orderToUpdate.isCheckedOut = order.isCheckedOut;
             await _context.SaveChangesAsync();
             return orderToUpdate;
         }
