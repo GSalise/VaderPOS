@@ -4,7 +4,7 @@ using SalesSystem.Data;
 using SalesSystem.DTOs;
 using SalesSystem.Interfaces;
 using SalesSystem.Models;
-
+using SalesSystem.Services;
 namespace SalesSystem.Controllers
 {
     [ApiController]
@@ -13,10 +13,13 @@ namespace SalesSystem.Controllers
     {
         private readonly IOrderProductRepository _orderProductRepository;
         private readonly IMapper _mapper;
-        public OrderProductController(IOrderProductRepository orderProductRepository, IMapper mapper)
+        private readonly SalesSocket _salesSocket;
+
+        public OrderProductController(IOrderProductRepository orderProductRepository, IMapper mapper, SalesSocket salesSocket)
         {
             _orderProductRepository = orderProductRepository;
             _mapper = mapper;
+            _salesSocket = salesSocket;
         }
 
         // GET: api/OrderProduct
@@ -36,6 +39,7 @@ namespace SalesSystem.Controllers
             try
             {
                 var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId));
+                await _salesSocket.SendMessageAsync(productId, 1);
                 return Ok(orderProduct);
             }
             catch (InvalidOperationException ex)
