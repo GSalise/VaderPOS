@@ -94,6 +94,7 @@
         <h3>Add Product</h3>
         <input id="productName" placeholder="Product Name" />
         <input id="productPrice" placeholder="Price" type="number" />
+        <input id="productQuantity" placeholder="Product Quantity" />
         <input id="productCategoryId" placeholder="Category ID" type="number" />
         <button onclick="addProduct()">Add Product</button>
 
@@ -231,10 +232,21 @@
         async function loadOrders() {
             const res = await fetch(`${API_BASE}/Order/getAllOrders`);
             const data = await res.json();
+
             const table = document.querySelector("#orderTable tbody");
             table.innerHTML = "";
-            data.forEach(o => {
-                const row = `<tr><td>${o.orderId}</td><td>${o.customerId}</td><td>${new Date(o.orderDate).toLocaleDateString()}</td></tr>`;
+
+            // Filter only orders that are NOT checked out
+            const activeOrders = data.filter(o => o.isCheckedOut === false);
+
+            activeOrders.forEach(o => {
+                const row = `
+                    <tr>
+                        <td>${o.orderId}</td>
+                        <td>${o.customerId}</td>
+                        <td>${new Date(o.orderDate).toLocaleDateString()}</td>
+                    </tr>
+                `;
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
@@ -306,6 +318,37 @@
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
+
+//         async function loadOrderProducts() {
+//     try {
+//         const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+//         if (!res.ok) {
+//             alert("Failed to load Order Products.");
+//             return;
+//         }
+
+//         const data = await res.json();
+
+//         // Filter only order products where the order is NOT checked out
+//         const filtered = data.filter(op => op.order && op.order.isCheckedOut === false);
+
+//         const table = document.querySelector("#orderProductTable tbody");
+//         table.innerHTML = "";
+
+//         filtered.forEach(op => {
+//             const row = `
+//                 <tr>
+//                     <td>${op.orderId}</td>
+//                     <td>${op.productId}</td>
+//                     <td>${op.quantity}</td>
+//                 </tr>`;
+//             table.insertAdjacentHTML("beforeend", row);
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         alert("Error loading Order Products.");
+//     }
+// }
 
         async function addOrderProduct() {
             const orderId = parseInt(document.getElementById("opOrderId").value, 10);
@@ -403,17 +446,18 @@
 
         async function addProduct() {
             const productName = document.getElementById("productName").value.trim();
+            const productQuantity = document.getElementById("productQuantity").value.trim();
             const price = parseFloat(document.getElementById("productPrice").value);
             const categoryId = parseInt(document.getElementById("productCategoryId").value);
 
-            if (!productName || Number.isNaN(price) || Number.isNaN(categoryId)) {
+            if (!productName || !productQuantity || Number.isNaN(price) || Number.isNaN(categoryId)) {
                 return alert("Please fill out all fields with valid values.");
             }
 
             const res = await fetch(PRODUCT_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productName, price, categoryId }) // updated field names
+                body: JSON.stringify({ productName, productQuantity, price, categoryId }) // updated field names
             });
 
             if (res.ok) {
@@ -421,6 +465,7 @@
                 document.getElementById("productName").value = "";
                 document.getElementById("productPrice").value = "";
                 document.getElementById("productCategoryId").value = "";
+                document.getElementById("productQuantity").value = "";
                 loadProducts();
             } else {
                 alert("Failed to add product.");
