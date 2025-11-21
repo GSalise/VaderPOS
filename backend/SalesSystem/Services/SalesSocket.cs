@@ -29,7 +29,7 @@ namespace SalesSystem.Services
                 await cliWebSocket.ConnectAsync(uri, CancellationToken.None);
 
 
-                string jsonMessage = JsonSerializer.Serialize(new { productId = Productid, quantity = Quantity , action = "getProduct" });
+                string jsonMessage = JsonSerializer.Serialize(new { productId = Productid, quantity = Quantity , action = "takeProductFromStock" });
                 byte[] msg = Encoding.ASCII.GetBytes(jsonMessage);
                 await cliWebSocket.SendAsync(msg, WebSocketMessageType.Text, true,CancellationToken.None);
 

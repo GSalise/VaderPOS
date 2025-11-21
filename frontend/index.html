@@ -446,7 +446,7 @@
 
         async function addProduct() {
             const productName = document.getElementById("productName").value.trim();
-            const productQuantity = document.getElementById("productQuantity").value.trim();
+            const quantity = document.getElementById("productQuantity").value.trim();
             const price = parseFloat(document.getElementById("productPrice").value);
             const categoryId = parseInt(document.getElementById("productCategoryId").value);
 
@@ -457,7 +457,7 @@
             const res = await fetch(PRODUCT_API, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productName, productQuantity, price, categoryId }) // updated field names
+                body: JSON.stringify({ productName, quantity, price, categoryId }) // updated field names
             });
 
             if (res.ok) {
