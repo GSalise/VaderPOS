@@ -1,4 +1,4 @@
-﻿################################################################################
+﻿﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -10,3 +10,31 @@
 .vs/VSWorkspaceState.json
 /.vs/VSWorkspaceState.json
 /.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+.vs/slnx.sqlite
+.vs/slnx.sqlite
+.vs/VaderPOS/copilot-chat/e3c0d548/sessions/f2b59d1c-e9b8-4b26-b222-3013caaef682
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/CodeChunks.db
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db-shm
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db-wal
+.vs/VaderPOS/CopilotIndices/17.14.1347.20289/CodeChunks.db-shm
+.vs/VaderPOS/CopilotIndices/17.14.1347.20289/CodeChunks.db-wal
+.vs/VaderPOS/CopilotIndices/17.14.1347.20289/SemanticSymbols.db-shm
+.vs/VaderPOS/CopilotIndices/17.14.1347.20289/SemanticSymbols.db-wal
+.vs/VaderPOS/FileContentIndex/9b40bfbf-f7f9-4a3c-967f-e47db81dc0f0.vsidx
+.vs/VaderPOS/FileContentIndex/9ec8a3e8-a943-4b31-979f-fcf97c36db3d.vsidx
+.vs/VaderPOS/FileContentIndex/35574dab-e09a-4b9c-87b0-1bf0f426298a.vsidx
+.vs/VaderPOS/FileContentIndex/98594944-8272-4022-9d57-e09754ffd522.vsidx
+.vs/VaderPOS/FileContentIndex/c464bb15-3804-408d-8a05-6accc6c65142.vsidx
+.vs/VaderPOS/copilot-chat/e3c0d548/sessions/f2b59d1c-e9b8-4b26-b222-3013caaef682
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/CodeChunks.db
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db-shm
+.vs/VaderPOS/CopilotIndices/0.2.1653.9816/SemanticSymbols.db-wal
+.vs/VaderPOS/FileContentIndex/9ec8a3e8-a943-4b31-979f-fcf97c36db3d.vsidx
+.vs/VaderPOS/FileContentIndex/98594944-8272-4022-9d57-e09754ffd522.vsidx
+.vs/VaderPOS/FileContentIndex/cee41e04-626f-4264-8e78-2330aa5e8c2a.vsidx
+.vs/slnx.sqlite
+.vs/slnx.sqlite
+.vs/
