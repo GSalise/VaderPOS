@@ -120,7 +120,11 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
             response.put("message", "Unknown action");
         }
         // Send the response back to the client
-        session.sendMessage(new org.springframework.web.socket.TextMessage(response.toString()));
+        String responseString = response != null ? response.toString() : "{}";
+        if (responseString == null) {
+            responseString = "{}";
+        }
+        session.sendMessage(new org.springframework.web.socket.TextMessage(responseString));
     }
 
 }

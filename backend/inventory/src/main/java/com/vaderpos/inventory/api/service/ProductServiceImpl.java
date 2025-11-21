@@ -29,6 +29,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Optional<ProductDTO> getProduct(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return productRepository.findById(id)
             .map(this::convertToDTO);
     }
@@ -46,13 +49,25 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
+        if (productDTO == null) {
+            throw new IllegalArgumentException("ProductDTO cannot be null");
+        }
         Product product = convertToEntity(productDTO);
+        if (product == null) {
+            throw new RuntimeException("Product conversion returned null");
+        }
         Product savedProduct = productRepository.save(product);
         return convertToDTO(savedProduct);
     }
 
     @Override
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
+        if (productDTO == null) {
+            throw new IllegalArgumentException("ProductDTO cannot be null");
+        }
         Optional<Product> existingProductOpt = productRepository.findById(id);
         if (existingProductOpt.isPresent()) {
             Product existingProduct = existingProductOpt.get();
@@ -69,11 +84,17 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public void deleteProduct(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
         productRepository.deleteById(id);
     }
 
     @Override
     public int checkProductStock(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
         Optional<Product> productOpt = productRepository.findById(id);
         if (productOpt.isPresent()) {
             return productOpt.get().getQuantity();
@@ -84,6 +105,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public void reduceProductStock(Long id, int quantity) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
         Optional<Product> productOpt = productRepository.findById(id);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
