@@ -28,19 +28,34 @@ public class CategoryServiceImpl implements ICategoryService{
 
     @Override
     public Optional<CategoryDTO> getCategory(Integer id){
+        if (id == null) {
+            return Optional.empty();
+        }
         return categoryRepository.findById(id)
-            .map(this::convertToDTO);
+                .map(this::convertToDTO);
     }
 
-    @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        ProductCategory category = convertToEntity(categoryDTO);
-        ProductCategory savedCategory = categoryRepository.save(category);
-        return convertToDTO(savedCategory);
+@Override
+public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    if (categoryDTO == null) {
+        throw new IllegalArgumentException("CategoryDTO cannot be null");
     }
+    ProductCategory category = convertToEntity(categoryDTO);
+    if (category == null) {
+        throw new RuntimeException("ProductCategory conversion returned null");
+    }
+    ProductCategory savedCategory = categoryRepository.save(category);
+    return convertToDTO(savedCategory);
+}
 
     @Override
     public CategoryDTO updateCategory(Integer id, CategoryDTO categoryDTO){
+        if (id == null) {
+            throw new IllegalArgumentException("Category id cannot be null");
+        }
+        if (categoryDTO == null) {
+            throw new IllegalArgumentException("CategoryDTO cannot be null");
+        }
         Optional<ProductCategory> existingCategoryOpt = categoryRepository.findById(id);
         if (existingCategoryOpt.isPresent()) {
             ProductCategory existingCategory = existingCategoryOpt.get();
@@ -54,6 +69,9 @@ public class CategoryServiceImpl implements ICategoryService{
 
     @Override
     public void deleteCategory(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Category id cannot be null");
+        }
         categoryRepository.deleteById(id);
     }
 

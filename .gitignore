@@ -1,3 +1,15 @@
+﻿﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/VaderPOS/CopilotIndices/17.13.431.34963
+/.vs/VaderPOS/FileContentIndex
+/.vs/VaderPOS/v17
+/.vs
+.vs/VSWorkspaceState.json
+.vs/VSWorkspaceState.json
+/.vs/VSWorkspaceState.json
+/.vs/VSWorkspaceState.json
 .vs/slnx.sqlite
 .vs/slnx.sqlite
 .vs/slnx.sqlite

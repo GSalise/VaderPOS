@@ -10,4 +10,7 @@ public interface IProductService {
     ProductDTO createProduct(ProductDTO productDTO);
     ProductDTO updateProduct(Long id, ProductDTO productDTO);
     void deleteProduct(Long id);
+
+    int checkProductStock(Long id);
+    void reduceProductStock(Long id, int quantity);
 }
