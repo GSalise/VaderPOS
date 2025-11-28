@@ -1,9 +1,13 @@
 package com.vaderpos.inventory.socket;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.json.JSONArray;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -17,7 +21,7 @@ import org.json.JSONObject;
 import org.springframework.lang.NonNull;
 
 
-public class SocketConnectionHandler extends TextWebSocketHandler {
+public class SocketConnectionHandler extends TextWebSocketHandler implements ProductChangeListener{
 
     private final IProductService productService;
 
@@ -26,8 +30,14 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
     }
 
     // Store all active connections
-    private List<WebSocketSession> activeConnections = Collections.synchronizedList(new ArrayList<>());
+    private final List<WebSocketSession> activeConnections = Collections.synchronizedList(new ArrayList<>());
 
+
+    @Override
+    public void onProductChanged(){
+        System.out.println("Product change detected - broadcasting to all clients");
+        broadcastAllProducts();
+    }
 
     // Executes when a client tries to connect
     @Override
@@ -37,6 +47,8 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         // Print out the session ID and store in the active connections list
         System.out.println(session.getId() + " connected.");
         activeConnections.add(session);
+
+        broadcastAllProducts(session);
     }
 
 
@@ -52,79 +64,116 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
     @Override
     public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws Exception {
-        // Parse the incoming message
-        String payload = message.getPayload().toString();
-        System.out.println("Received message from " +  session.getId() + ": " + payload);
-        JSONObject jsonObject = new JSONObject(payload);
-        long productId = jsonObject.getInt("productId");
-        String action = jsonObject.getString("action");
 
-        Integer quantity = null;
-        if (jsonObject.has("quantity")) {
-            quantity = jsonObject.getInt("quantity");
-        }
-
-
-           // Logic: getProduct
         JSONObject response = new JSONObject();
-        if ("getProduct".equals(action)) {
-            Optional<ProductDTO> productOpt = productService.getProduct(productId);
-            if (productOpt.isPresent()) {
-                ProductDTO product = productOpt.get();
-                response.put("status", "success");
-                response.put("productId", product.productId());
-                response.put("productName", product.productName());
-                response.put("quantity", product.quantity());
-                response.put("price", product.price());
-                response.put("categoryId", product.categoryId());
-            } else {
-                response.put("status", "error");
-                response.put("message", "Product not found");
+
+        try{
+            String payload = message.getPayload().toString();
+            System.out.println("Received message from " +  session.getId() + ": " + payload);
+            JSONObject jsonObject = new JSONObject(payload);
+            long productId = jsonObject.getInt("productId");
+            String action = jsonObject.getString("action");
+
+            Integer quantity = null;
+            if (jsonObject.has("quantity")) {
+                quantity = jsonObject.getInt("quantity");
             }
-        } else if ("takeProductFromStock".equals(action)) {
-            try {
-                if(quantity != null) {
-                    productService.reduceProductStock(productId, quantity);
+
+            switch(action){
+                case "getProduct" -> {
                     Optional<ProductDTO> productOpt = productService.getProduct(productId);
-                    ProductDTO product = productOpt.get();
-                    response.put("status", "success");
-                    response.put("message", "Stock has been successfully reduced");
-                    response.put("productId", product.productId());
-                    response.put("remainingStock", product.quantity());
-                } else {
-                    response.put("status", "error");
-                    response.put("message", "Quantity is required for this action");
+                    if (productOpt.isEmpty()) {
+                        response.put("status", "error");
+                        response.put("message", "Product not found");
+                    } else {
+                        ProductDTO product = productOpt.get();
+                        response.put("status", "success");
+                        response.put("productId", product.productId());
+                        response.put("productName", product.productName());
+                        response.put("quantity", product.quantity());
+                        response.put("price", product.price());
+                        response.put("categoryId", product.categoryId());
+                    }
                 }
-            } catch (RuntimeException e) {
-                response.put("status", "error");
-                response.put("message", e.getMessage());
+                case "takeProductFromStock" -> {
+                    if(quantity == null) {
+                        response.put("status", "error");
+                        response.put("message", "Quantity is required for this action");
+                        break;
+                    }
+                    try {
+                        productService.reduceProductStock(productId, quantity);
+                        Optional<ProductDTO> updatedProduct = productService.getProduct(productId);
+                        if(updatedProduct.isPresent()) {
+                            ProductDTO product = updatedProduct.get();
+                            response.put("status", "success");
+                            response.put("message", "Stock has been successfully reduced");
+                            response.put("productId", product.productId());
+                            response.put("remainingStock", product.quantity());
+                        } else {
+                            response.put("status", "error");
+                            response.put("message", "Quantity is required for this action");
+                        }
+                    } catch (RuntimeException e) {
+                        response.put("status", "error");
+                        response.put("message", e.getMessage());
+                    }
+                }
+                default -> {
+                    response.put("status", "error");
+                    response.put("message", "Unknown action: " + action);
+                }
             }
-
-
-
-            // if (productOpt.isPresent()) {
-            //     if(quantity != null) {
-            //         productService.reduceProductStock(productId, quantity);
-            //         ProductDTO product = productOpt.get();
-            //         response.put("status", "success");
-            //         response.put("message", "Stock has been successfully reduced");
-            //         response.put("productId", product.productId());
-            //         response.put("remainingStock", product.quantity());
-            //     } else {
-            //         response.put("status", "error");
-            //         response.put("message", "Quantity is required for this action");
-            //     }
-            // }
-        } else {
+        } catch (Exception e) {
             response.put("status", "error");
-            response.put("message", "Unknown action");
+            response.put("message", "Invalid request: " + e.getMessage());
         }
-        // Send the response back to the client
-        String responseString = response != null ? response.toString() : "{}";
-        if (responseString == null) {
-            responseString = "{}";
+
+        sendJson(session, response);
+    }
+
+    private void broadcastAllProducts() {
+        for (WebSocketSession session : activeConnections) {
+            broadcastAllProducts(session);
         }
-        session.sendMessage(new org.springframework.web.socket.TextMessage(responseString));
+    }
+
+    private void broadcastAllProducts(WebSocketSession session) {
+        try {
+            if (session.isOpen()) {
+                List<ProductDTO> products = productService.getAllProducts();
+
+                JSONObject broadcast = new JSONObject();
+                broadcast.put("type", "productUpdate");
+                broadcast.put("timestamp", System.currentTimeMillis());
+
+                JSONArray productsArray = getObjects(products);
+
+                broadcast.put("products", productsArray);
+
+                session.sendMessage(new TextMessage(broadcast.toString()));
+            }
+        } catch (Exception e) {
+            System.err.println("Error broadcasting to session " + session.getId() + ": " + e.getMessage());
+        }
+    }
+
+    private static JSONArray getObjects(List<ProductDTO> products) {
+        JSONArray productsArray = new JSONArray();
+        for (ProductDTO product : products) {
+            JSONObject productJson = new JSONObject();
+            productJson.put("productId", product.productId());
+            productJson.put("productName", product.productName());
+            productJson.put("quantity", product.quantity());
+            productJson.put("price", product.price());
+            productJson.put("categoryId", product.categoryId());
+            productsArray.put(productJson);
+        }
+        return productsArray;
+    }
+
+    private void sendJson(WebSocketSession session, JSONObject json) throws IOException {
+        session.sendMessage(new TextMessage(json.toString()));
     }
 
 }
