@@ -142,6 +142,21 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
+    public void returnProductStock(Long id, int quantity) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()){
+            Product product = productOpt.get();
+            product.setQuantity(product.getQuantity() + quantity);
+            productRepository.save(product);
+            notifyChange();
+        } else {
+            throw new RuntimeException("Product not found");
+        }
+    }
+
     private ProductDTO convertToDTO(Product product) {
         return new ProductDTO(
             product.getProductId(),
