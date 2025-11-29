@@ -52,6 +52,22 @@ namespace SalesSystem.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderId }, createdOrder);
         }
 
+        [HttpPut]
+        [Route("updateOrder/{id}")]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDto order)
+        {
+            if (order == null)
+                return BadRequest();
+
+            var orderEntity = _mapper.Map<Order>(order);
+            var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderEntity);
+
+            if (updatedOrder == null)
+                return NotFound();
+
+            var updatedOrderDto = _mapper.Map<OrderDto>(updatedOrder);
+            return Ok(updatedOrderDto);
+        }
         // DELETE: api/order/5
         [HttpDelete("deleteOrder/{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
