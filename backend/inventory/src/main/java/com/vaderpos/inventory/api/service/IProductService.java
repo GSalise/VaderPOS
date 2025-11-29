@@ -13,4 +13,5 @@ public interface IProductService {
 
     int checkProductStock(Long id);
     void reduceProductStock(Long id, int quantity);
+    void returnProductStock(Long id, int quantity);
 }

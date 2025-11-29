@@ -95,7 +95,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
                         response.put("categoryId", product.categoryId());
                     }
                 }
-                case "takeProductFromStock" -> {
+                case "takeProduct" -> {
                     if(quantity == null) {
                         response.put("status", "error");
                         response.put("message", "Quantity is required for this action");
@@ -108,6 +108,30 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
                             ProductDTO product = updatedProduct.get();
                             response.put("status", "success");
                             response.put("message", "Stock has been successfully reduced");
+                            response.put("productId", product.productId());
+                            response.put("remainingStock", product.quantity());
+                        } else {
+                            response.put("status", "error");
+                            response.put("message", "Quantity is required for this action");
+                        }
+                    } catch (RuntimeException e) {
+                        response.put("status", "error");
+                        response.put("message", e.getMessage());
+                    }
+                }
+                case "returnProduct" -> {
+                    if(quantity == null) {
+                        response.put("status", "error");
+                        response.put("message", "Quantity is required for this action");
+                        break;
+                    }
+                    try {
+                        productService.returnProductStock(productId, quantity);
+                        Optional<ProductDTO> updatedProduct = productService.getProduct(productId);
+                        if(updatedProduct.isPresent()) {
+                            ProductDTO product = updatedProduct.get();
+                            response.put("status", "success");
+                            response.put("message", "Stock has been successfully added");
                             response.put("productId", product.productId());
                             response.put("remainingStock", product.quantity());
                         } else {
