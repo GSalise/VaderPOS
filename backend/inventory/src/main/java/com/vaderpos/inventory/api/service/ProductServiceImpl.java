@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.math.BigDecimal;
 import com.vaderpos.inventory.api.model.Product;
+import com.vaderpos.inventory.socket.ProductChangeListener;
+
 
 @Service
 public class ProductServiceImpl implements IProductService {
@@ -19,6 +21,20 @@ public class ProductServiceImpl implements IProductService {
     public ProductServiceImpl(IProductRepository productRepository) {
         this.productRepository = productRepository;
     }
+
+    private ProductChangeListener changeListener;
+
+    public void setChangeListener(ProductChangeListener listener){
+        this.changeListener = listener;
+    }
+
+    // ADD THIS HELPER METHOD
+    private void notifyChange() {
+        if (changeListener != null) {
+            changeListener.onProductChanged();
+        }
+    }
+
 
     @Override
     public List<ProductDTO> getAllProducts() {
@@ -57,6 +73,7 @@ public class ProductServiceImpl implements IProductService {
             throw new RuntimeException("Product conversion returned null");
         }
         Product savedProduct = productRepository.save(product);
+        notifyChange();
         return convertToDTO(savedProduct);
     }
 
@@ -76,6 +93,7 @@ public class ProductServiceImpl implements IProductService {
             existingProduct.setPrice(BigDecimal.valueOf(productDTO.price()));
             existingProduct.setCategoryId(productDTO.categoryId());
             Product updatedProduct = productRepository.save(existingProduct);
+            notifyChange();
             return convertToDTO(updatedProduct);
         } else {
             throw new RuntimeException("Product not found");
@@ -88,6 +106,7 @@ public class ProductServiceImpl implements IProductService {
             throw new IllegalArgumentException("Product id cannot be null");
         }
         productRepository.deleteById(id);
+        notifyChange();
     }
 
     @Override
@@ -114,10 +133,26 @@ public class ProductServiceImpl implements IProductService {
             if (product.getQuantity() >= quantity){
                 product.setQuantity(product.getQuantity() - quantity);
                 productRepository.save(product);
+                notifyChange();
             } else {
                 throw new RuntimeException("Insufficient Stock");
             }
         }else{
+            throw new RuntimeException("Product not found");
+        }
+    }
+
+    public void returnProductStock(Long id, int quantity) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product id cannot be null");
+        }
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()){
+            Product product = productOpt.get();
+            product.setQuantity(product.getQuantity() + quantity);
+            productRepository.save(product);
+            notifyChange();
+        } else {
             throw new RuntimeException("Product not found");
         }
     }
