@@ -16,6 +16,7 @@ namespace SalesSystem.Repositries
         {
             return await _context.orderProducts
                 .Include(op => op.Order)
+                .Where(op => !op.Order.isCheckedOut)
                 .ToListAsync();
         }
 

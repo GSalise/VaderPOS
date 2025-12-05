@@ -2,6 +2,7 @@ package com.vaderpos.inventory.api.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin; // <-- import this
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.vaderpos.inventory.api.dto.CategoryDTO;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("api/categories")
+@CrossOrigin(origins = "http://localhost:5500") // <-- allow frontend calls
 public class CategoryController {
     private final ICategoryService categoryService;
 
@@ -52,5 +54,4 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
-
 }

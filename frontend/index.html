@@ -1,0 +1,577 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VaderPOS - Simple Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        h2 {
+            border-bottom: 2px solid #444;
+            padding-bottom: 5px;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #005fa3;
+            }
+
+        input {
+            padding: 6px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧾 VaderPOS - Basic Frontend</h1>
+
+    <!-- ===================== CATEGORIES ===================== -->
+    <section>
+        <h2>Categories</h2>
+        <button onclick="loadCategories()">Load Categories</button>
+
+        <h3>Add Category</h3>
+        <input id="categoryName" placeholder="Category Name" />
+        <input id="categoryId" placeholder="Category ID (optional)" type="number" />
+        <button onclick="addCategory()">Add Category</button>
+
+        <h3>Delete Category</h3>
+        <input id="categoryIdToDelete" placeholder="Category ID" type="number" />
+        <button onclick="deleteCategory()">➕ Delete Category</button>
+
+        <table id="categoryTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- ===================== PRODUCTS ===================== -->
+    <section>
+        <h2>Products</h2>
+        <button onclick="loadProducts()">Load Products</button>
+
+        <h3>Add Product</h3>
+        <input id="productName" placeholder="Product Name" />
+        <input id="productPrice" placeholder="Price" type="number" />
+        <input id="productQuantity" placeholder="Product Quantity" />
+        <input id="productCategoryId" placeholder="Category ID" type="number" />
+        <button onclick="addProduct()">Add Product</button>
+
+        <h3>Delete Product</h3>
+        <input id="productIdToDelete" placeholder="Product ID" type="number" />
+        <button onclick="deleteProduct()">Delete Product</button>
+
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Category ID</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- Customers Section -->
+    <section>
+        <h2>Customers</h2>
+        <button onclick="loadCustomers()">Load Customers</button>
+
+        <h3>Add Customer</h3>
+        <input id="custName" placeholder="Customer Name" />
+        <input id="custContact" placeholder="Contact No" />
+        <button onclick="addCustomer()">Add Customer</button>
+
+        <table id="customerTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Contact</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- Orders Section -->
+    <section>
+        <h2>Orders</h2>
+
+        <div style="margin-bottom:10px;">
+            <button onclick="loadOrders()">🔄 Load Orders</button>
+        </div>
+
+        <h3>Add Order</h3>
+        <input id="orderCustomerId" placeholder="Customer ID" type="number" />
+        <input id="orderDate" placeholder="Order Date" type="date" />
+        <button onclick="addOrder()">➕ Add Order</button>
+
+        <h3>Delete Order</h3>
+        <input id="orderIdtoDelete" placeholder="Oder ID" type="number" />
+        <button onclick="deleteOrder()">➕ Delete Order</button>
+
+        <table id="orderTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer ID</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- OrderProducts Section -->
+    <section>
+        <h2>Order Products</h2>
+
+        <div style="margin-bottom:10px;">
+            <button onclick="loadOrderProducts()">🔄 Load Order Products</button>
+        </div>
+
+        <h3>Add Order Product</h3>
+        <input id="opOrderId" placeholder="Order ID" type="number" />
+        <input id="opProductId" placeholder="Product ID" type="number" />
+        <!--<input id="opQuantity" placeholder="Quantity" type="number" />-->
+        <button onclick="addOrderProduct()">➕ Add Order Product</button>
+        <<button onclick="subtractOrderProductQuantity()">➖ Subtract Quantity</button>
+
+
+        <table id="orderProductTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <script>
+        const API_BASE = "http://localhost:5264/api";
+        const CATEGORY_API = "http://localhost:8080/api/categories";
+        const PRODUCT_API = "http://localhost:8080/api/products";
+
+        // ======== CUSTOMERS ========
+        async function loadCustomers() {
+            const res = await fetch(`${API_BASE}/Customer/getAllCustomers`);
+            const data = await res.json();
+            const table = document.querySelector("#customerTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => {
+                const row = `<tr><td>${c.customerId}</td><td>${c.name}</td><td>${c.contact_No}</td></tr>`;
+                table.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function addCustomer() {
+            const name = document.getElementById("custName").value.trim();
+            const contact = document.getElementById("custContact").value.trim();
+            if (!name || !contact) return alert("Please fill out all fields.");
+
+            const res = await fetch(`${API_BASE}/Customer/addCustomer`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, contact_No: contact })
+            });
+
+            if (res.ok) {
+                alert("Customer added!");
+                loadCustomers();
+            } else {
+                alert("Failed to add customer.");
+            }
+        }
+
+        // ======== ORDERS ========
+        async function loadOrders() {
+            const res = await fetch(`${API_BASE}/Order/getAllOrders`);
+            const data = await res.json();
+
+            const table = document.querySelector("#orderTable tbody");
+            table.innerHTML = "";
+
+            // Filter only orders that are NOT checked out
+            const activeOrders = data.filter(o => o.isCheckedOut === false);
+
+            activeOrders.forEach(o => {
+                const row = `
+                    <tr>
+                        <td>${o.orderId}</td>
+                        <td>${o.customerId}</td>
+                        <td>${new Date(o.orderDate).toLocaleDateString()}</td>
+                    </tr>
+                `;
+                table.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function addOrder() {
+            const customerId = parseInt(document.getElementById("orderCustomerId").value);
+            const orderDate = document.getElementById("orderDate").value;
+            if (!customerId || !orderDate) return alert("Please fill out all fields.");
+
+            const res = await fetch(`${API_BASE}/Order/addOrder`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ customerId, orderDate })
+            });
+
+            if (res.ok) {
+                alert("Order added!");
+                loadOrders();
+            } else {
+                alert("Failed to add order.");
+            }
+        }
+
+        async function deleteOrder() {
+            const id = document.getElementById("orderIdtoDelete").value.trim();
+
+            if (!id) {
+                alert("Please enter an Order ID to delete.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete order ID ${id}?`)) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/Order/deleteOrder/${id}`, { method: "DELETE" });
+
+                if (res.ok) {
+                    alert(`Order ID ${id} deleted successfully!`);
+                    document.getElementById("orderIdtoDelete").value = ""; // clear input
+                    loadOrders(); // refresh table
+                } else {
+                    const msg = await res.text();
+                    alert(`Failed to delete order. Server said: ${msg}`);
+                }
+            } catch (err) {
+                alert("Error connecting to server. Please check if backend is running.");
+                console.error(err);
+            }
+        }
+
+        // ======== ORDER PRODUCTS ========
+
+        async function loadOrderProducts() {
+            const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            if (!res.ok) {
+                alert("Failed to load Order Products.");
+                return;
+            }
+            const data = await res.json();
+            const table = document.querySelector("#orderProductTable tbody");
+            table.innerHTML = "";
+            data.forEach(op => {
+                const row = `
+                    <tr>
+                        <td>${op.orderId}</td>
+                        <td>${op.productId}</td>
+                        <td>${op.quantity}</td>
+                    </tr>`;
+                table.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+//         async function loadOrderProducts() {
+//     try {
+//         const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+//         if (!res.ok) {
+//             alert("Failed to load Order Products.");
+//             return;
+//         }
+
+//         const data = await res.json();
+
+//         // Filter only order products where the order is NOT checked out
+//         const filtered = data.filter(op => op.order && op.order.isCheckedOut === false);
+
+//         const table = document.querySelector("#orderProductTable tbody");
+//         table.innerHTML = "";
+
+//         filtered.forEach(op => {
+//             const row = `
+//                 <tr>
+//                     <td>${op.orderId}</td>
+//                     <td>${op.productId}</td>
+//                     <td>${op.quantity}</td>
+//                 </tr>`;
+//             table.insertAdjacentHTML("beforeend", row);
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         alert("Error loading Order Products.");
+//     }
+// }
+
+        async function addOrderProduct() {
+            const orderId = parseInt(document.getElementById("opOrderId").value, 10);
+            const productId = parseInt(document.getElementById("opProductId").value, 10);
+            //const quantity = parseInt(document.getElementById("opQuantity").value);
+
+            if (Number.isNaN(orderId) || Number.isNaN(productId)) {
+                alert("Please fill out all fields with valid numbers.");
+                return;
+            }
+
+            // Controller expects orderId and productId as query parameters, not JSON body.
+            const url = `${API_BASE}/OrderProduct/addProductToOrder?orderId=${encodeURIComponent(orderId)}&productId=${encodeURIComponent(productId)}`;
+            try {
+                const res = await fetch(url, {
+                    method: "POST"
+                });
+
+                if (res.ok) {
+                    alert("Order Product added!");
+                    document.getElementById("opOrderId").value = "";
+                    document.getElementById("opProductId").value = "";
+                    loadOrderProducts();
+                } else {
+                    const text = await res.text();
+                    alert(`Failed to add Order Product. Server: ${text}`);
+                }
+            } catch (err) {
+                alert("Error connecting to server. Please check if backend is running.");
+                console.error(err);
+            }
+        }
+
+
+
+
+        async function loadCategories() {
+            const res = await fetch(CATEGORY_API);
+            const data = await res.json();
+            const table = document.querySelector("#categoryTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => {
+                const row = `<tr>
+            <td>${c.categoryId}</td>
+            <td>${c.categoryName}</td>
+        </tr>`;
+                table.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function addCategory() {
+            const categoryName = document.getElementById("categoryName").value.trim();
+            const categoryId = parseInt(document.getElementById("categoryId").value);
+
+            if (!categoryName) {
+                return alert("Please enter a category name.");
+            }
+
+            const payload = categoryId ? { categoryId, categoryName } : { categoryName };
+
+            const res = await fetch(CATEGORY_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Category added!");
+                document.getElementById("categoryId").value = "";
+                document.getElementById("categoryName").value = "";
+                loadCategories();
+            } else {
+                const errorText = await res.text();
+                alert(`Failed to add category. Server said: ${errorText}`);
+            }
+        }
+
+        // ===================== PRODUCT FUNCTIONS =====================
+        async function loadProducts() {
+            const res = await fetch(PRODUCT_API);
+            const data = await res.json();
+            const table = document.querySelector("#productTable tbody");
+            table.innerHTML = "";
+            data.forEach(p => {
+                const row = `<tr>
+            <td>${p.productId}</td>
+            <td>${p.productName}</td>
+            <td>${p.price}</td>
+            <td>${p.quantity}</td>
+            <td>${p.categoryId}</td>
+        </tr>`;
+                table.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function addProduct() {
+            const productName = document.getElementById("productName").value.trim();
+            const quantity = document.getElementById("productQuantity").value.trim();
+            const price = parseFloat(document.getElementById("productPrice").value);
+            const categoryId = parseInt(document.getElementById("productCategoryId").value);
+
+            if (!productName || !productQuantity || Number.isNaN(price) || Number.isNaN(categoryId)) {
+                return alert("Please fill out all fields with valid values.");
+            }
+
+            const res = await fetch(PRODUCT_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productName, quantity, price, categoryId }) // updated field names
+            });
+
+            if (res.ok) {
+                alert("Product added!");
+                document.getElementById("productName").value = "";
+                document.getElementById("productPrice").value = "";
+                document.getElementById("productCategoryId").value = "";
+                document.getElementById("productQuantity").value = "";
+                loadProducts();
+            } else {
+                alert("Failed to add product.");
+            }
+        }
+
+        async function deleteCategory() {
+            const id = document.getElementById("categoryIdToDelete").value.trim();
+            if (!id) {
+                alert("Please enter a Category ID to delete.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete Category ID ${id}?`)) return;
+
+            try {
+                const res = await fetch(`${CATEGORY_API}/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert(`Category ID ${id} deleted successfully!`);
+                    document.getElementById("categoryIdToDelete").value = ""; // clear input
+                    loadCategories(); // refresh table
+                } else {
+                    const msg = await res.text();
+                    alert(`Failed to delete category. Server said: ${msg}`);
+                }
+            } catch (err) {
+                alert("Error connecting to server. Please check if backend is running.");
+                console.error(err);
+            }
+        }
+
+        async function deleteProduct() {
+            const id = document.getElementById("productIdToDelete").value.trim();
+            if (!id) {
+                alert("Please enter a Product ID to delete.");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete Product ID ${id}?`)) return;
+
+            try {
+                const res = await fetch(`${PRODUCT_API}/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert(`Product ID ${id} deleted successfully!`);
+                    document.getElementById("productIdToDelete").value = ""; // clear input
+                    loadProducts(); // refresh table
+                } else {
+                    const msg = await res.text();
+                    alert(`Failed to delete product. Server said: ${msg}`);
+                }
+            } catch (err) {
+                alert("Error connecting to server. Please check if backend is running.");
+                console.error(err);
+            }
+        }
+
+
+
+        async function subtractOrderProductQuantity() {
+            try {
+                // 1. Get all OrderProducts
+                const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+                if (!opRes.ok) throw new Error("Failed to fetch Order Products.");
+                const orderProducts = await opRes.json();
+
+                // 2. Loop through each OrderProduct
+                for (const op of orderProducts) {
+                    const productId = op.productId;
+                    const qtyToSubtract = op.quantity;
+
+                    // 3. Get current product info
+                    const prodRes = await fetch(`${PRODUCT_API}/${productId}`);
+                    if (!prodRes.ok) {
+                        console.error(`Failed to fetch Product ID ${productId}`);
+                        continue; // skip this product
+                    }
+                    const product = await prodRes.json();
+
+                    // 4. Update product quantity
+                    const newQuantity = product.quantity - qtyToSubtract;
+                    const updatedProduct = {
+                        ...product,
+                        quantity: newQuantity >= 0 ? newQuantity : 0 // prevent negative qty
+                    };
+
+                    // 5. Send updated product via POST (retain other fields)
+                    const updateRes = await fetch(`${PRODUCT_API}/${productId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedProduct)
+                    });
+
+                    if (!updateRes.ok) {
+                        console.error(`Failed to update Product ID ${productId}`);
+                    }
+                }
+
+                alert("All quantities subtracted from products successfully!");
+                loadProducts(); // refresh product table
+            } catch (err) {
+                console.error(err);
+                alert("Error processing quantity subtraction. Check console for details.");
+            }
+
+        }
+
+    </script>
+</body>
+</html>
