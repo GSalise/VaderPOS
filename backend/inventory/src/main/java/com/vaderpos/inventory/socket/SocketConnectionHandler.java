@@ -13,7 +13,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
-import com.vaderpos.inventory.api.model.Product;
 import com.vaderpos.inventory.api.service.IProductService;
 import java.util.Optional;
 
@@ -24,6 +23,8 @@ import org.springframework.lang.NonNull;
 public class SocketConnectionHandler extends TextWebSocketHandler implements ProductChangeListener{
 
     private final IProductService productService;
+    // Track the last changed product ID for targeted updates
+    private Long lastChangedProductId = null;
 
     public SocketConnectionHandler(IProductService productService) {
         this.productService = productService;
@@ -34,20 +35,21 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
 
 
     @Override
-    public void onProductChanged(){
+    public void onProductChanged(Long productId){
         System.out.println("Product change detected - broadcasting to all clients");
-        broadcastAllProducts();
+        lastChangedProductId = productId;
+        broadcastChanges();
     }
 
     // Executes when a client tries to connect
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
-
         // Print out the session ID and store in the active connections list
         System.out.println(session.getId() + " connected.");
         activeConnections.add(session);
 
+        // Send all product list for initial syncing
         broadcastAllProducts(session);
     }
 
@@ -102,6 +104,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
                         break;
                     }
                     try {
+                        lastChangedProductId = productId;
                         productService.reduceProductStock(productId, quantity);
                         Optional<ProductDTO> updatedProduct = productService.getProduct(productId);
                         if(updatedProduct.isPresent()) {
@@ -126,6 +129,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
                         break;
                     }
                     try {
+                        lastChangedProductId = productId;
                         productService.returnProductStock(productId, quantity);
                         Optional<ProductDTO> updatedProduct = productService.getProduct(productId);
                         if(updatedProduct.isPresent()) {
@@ -156,9 +160,51 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
         sendJson(session, response);
     }
 
+    private void broadcastChanges() {
+        // If changes are unknown, broadcast all products
+        if (lastChangedProductId == null) {
+            broadcastAllProducts();
+            return;
+        }
+
+        // If a product was deleted, broadcast all products
+        Optional<ProductDTO> changedProduct = productService.getProduct(lastChangedProductId);
+        if (changedProduct.isEmpty()) {
+            broadcastAllProducts();
+            return;
+        }
+
+        // If a changed product is present, send only the info about that product
+        for (WebSocketSession session : activeConnections) {
+            broadcastSingleProduct(session, changedProduct.get());
+        }
+
+        lastChangedProductId = null; // Reset
+
+
+    }
+
     private void broadcastAllProducts() {
         for (WebSocketSession session : activeConnections) {
             broadcastAllProducts(session);
+        }
+    }
+
+    private void broadcastSingleProduct(WebSocketSession session, ProductDTO product) {
+        try {
+            if (session.isOpen()) {
+
+                JSONObject broadcast = new JSONObject();
+                broadcast.put("type", "productUpdate");
+                broadcast.put("timestamp", System.currentTimeMillis());
+                broadcast.put("updateType", "single");
+                JSONObject singleProductUpdate = getObjects(product);
+                broadcast.put("updatedProduct", singleProductUpdate);
+
+                session.sendMessage(new TextMessage(broadcast.toString()));
+            }
+        } catch (Exception e) {
+            System.err.println("Error broadcasting to session " + session.getId() + ": " + e.getMessage());
         }
     }
 
@@ -170,7 +216,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
                 JSONObject broadcast = new JSONObject();
                 broadcast.put("type", "productUpdate");
                 broadcast.put("timestamp", System.currentTimeMillis());
-
+                broadcast.put("updateType", "global");
                 JSONArray productsArray = getObjects(products);
 
                 broadcast.put("products", productsArray);
@@ -194,6 +240,17 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
             productsArray.put(productJson);
         }
         return productsArray;
+    }
+
+    private static JSONObject getObjects(ProductDTO product) {
+        JSONObject productJson = new JSONObject();
+        productJson.put("productId", product.productId());
+        productJson.put("productName", product.productName());
+        productJson.put("quantity", product.quantity());
+        productJson.put("price", product.price());
+        productJson.put("categoryId", product.categoryId());
+
+        return productJson;
     }
 
     private void sendJson(WebSocketSession session, JSONObject json) throws IOException {

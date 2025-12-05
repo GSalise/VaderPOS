@@ -28,10 +28,10 @@ public class ProductServiceImpl implements IProductService {
         this.changeListener = listener;
     }
 
-    // ADD THIS HELPER METHOD
-    private void notifyChange() {
+
+    private void notifyChange(Long productId) {
         if (changeListener != null) {
-            changeListener.onProductChanged();
+            changeListener.onProductChanged(productId);
         }
     }
 
@@ -69,11 +69,8 @@ public class ProductServiceImpl implements IProductService {
             throw new IllegalArgumentException("ProductDTO cannot be null");
         }
         Product product = convertToEntity(productDTO);
-        if (product == null) {
-            throw new RuntimeException("Product conversion returned null");
-        }
         Product savedProduct = productRepository.save(product);
-        notifyChange();
+        notifyChange(savedProduct.getProductId());
         return convertToDTO(savedProduct);
     }
 
@@ -93,7 +90,7 @@ public class ProductServiceImpl implements IProductService {
             existingProduct.setPrice(BigDecimal.valueOf(productDTO.price()));
             existingProduct.setCategoryId(productDTO.categoryId());
             Product updatedProduct = productRepository.save(existingProduct);
-            notifyChange();
+            notifyChange(updatedProduct.getProductId());
             return convertToDTO(updatedProduct);
         } else {
             throw new RuntimeException("Product not found");
@@ -106,7 +103,7 @@ public class ProductServiceImpl implements IProductService {
             throw new IllegalArgumentException("Product id cannot be null");
         }
         productRepository.deleteById(id);
-        notifyChange();
+        notifyChange(null);
     }
 
     @Override
@@ -133,7 +130,7 @@ public class ProductServiceImpl implements IProductService {
             if (product.getQuantity() >= quantity){
                 product.setQuantity(product.getQuantity() - quantity);
                 productRepository.save(product);
-                notifyChange();
+                notifyChange(product.getProductId());
             } else {
                 throw new RuntimeException("Insufficient Stock");
             }
@@ -151,7 +148,7 @@ public class ProductServiceImpl implements IProductService {
             Product product = productOpt.get();
             product.setQuantity(product.getQuantity() + quantity);
             productRepository.save(product);
-            notifyChange();
+            notifyChange(product.getProductId());
         } else {
             throw new RuntimeException("Product not found");
         }
