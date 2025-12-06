@@ -47,16 +47,17 @@ using SalesSystem.Data;
 using SalesSystem.Interfaces;
 using SalesSystem.Repositries;
 using System.Text.Json.Serialization;
-
+using SalesSystem.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<SalesSystem.Services.SalesSocket>();
+builder.Services.AddSingleton<SalesSocket>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IOrderRespository, OrderRepository>();
 builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
+
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -77,6 +78,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+var salesSocket = app.Services.GetRequiredService<SalesSocket>();
+await salesSocket.ConnectAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
