@@ -1,5 +1,5 @@
 package com.vaderpos.inventory.socket;
 
 public interface ProductChangeListener {
-    void onProductChanged();
+    void onProductChanged(Long productId);
 }
