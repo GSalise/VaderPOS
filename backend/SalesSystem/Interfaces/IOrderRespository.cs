@@ -8,7 +8,7 @@ namespace SalesSystem.Interfaces
          Task <Order> AddOrderAsync(Order order);
          Task<Order> UpdateOrderAsync(int id ,Order order);
          Task<bool> DeleteOrderAsync(int id);
-         
+        Task<Order> CheckoutOrderAsync(int id);
 
     }
 }

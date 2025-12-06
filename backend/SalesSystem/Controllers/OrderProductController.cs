@@ -39,7 +39,7 @@ namespace SalesSystem.Controllers
             try
             {
                 var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId));
-                await _salesSocket.SendMessageAsync(productId, 1);
+                //await _salesSocket.SendMessageAsync(productId, 2);
                 return Ok(orderProduct);
             }
             catch (InvalidOperationException ex)

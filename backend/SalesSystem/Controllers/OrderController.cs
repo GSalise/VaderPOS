@@ -68,6 +68,34 @@ namespace SalesSystem.Controllers
             var updatedOrderDto = _mapper.Map<OrderDto>(updatedOrder);
             return Ok(updatedOrderDto);
         }
+
+        // New: checkout endpoint
+        // POST: api/order/checkoutOrder/5
+        [HttpPost("checkoutOrder/{id}")]
+        public async Task<IActionResult> CheckoutOrder(int id)
+        {
+            try
+            {
+                var updatedOrder = await _orderRepository.CheckoutOrderAsync(id);
+
+                if (updatedOrder.OrderProducts != null)
+                {
+                    foreach (var op in updatedOrder.OrderProducts)
+                    {
+                        await _salesSocket.SendMessageAsync(op.ProductId, op.Quantity);
+                    }
+                }
+
+                var dto = _mapper.Map<OrderDto>(updatedOrder);
+                return Ok(dto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+
         // DELETE: api/order/5
         [HttpDelete("deleteOrder/{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
