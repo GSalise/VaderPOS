@@ -1,174 +1,199 @@
 ﻿using System;
-using System.Net.WebSockets;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Net.WebSockets;
 using System.Threading;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace SalesSystem.Services
 {
-    public class SalesSocket : IDisposable
+    public class SalesSocket
     {
-        private readonly string _address;
-        private readonly int _port;
-        private ClientWebSocket? _webSocket;
-        private CancellationTokenSource? _cancellationTokenSource;
-        private bool _isConnected;
+        private readonly string _address = "127.0.0.1";
+        private readonly int _Salesport = 5264;
+        private readonly int _Inventoryport = 8080;
+        private bool _isConnectedtoInventory = false;
+        private ClientWebSocket _webSocket = new ClientWebSocket();
+        private readonly List<WebSocket> _salesClients = new();
+        private readonly object _lock = new();
 
-        public SalesSocket(string serverIp = "127.0.0.1", int serverPort = 8080)
+        public async Task StartSalesSocketAsync()
+         {
+             HttpListener listener = new HttpListener();
+             listener.Prefixes.Add($"http://{_address}:{_Salesport}/ws/");
+             listener.Start();
+
+             Console.WriteLine($"Sales WebSocket server started at ws://{_address}:{_Salesport}/ws/");
+             while (true)
+             {
+                 HttpListenerContext context = await listener.GetContextAsync();
+                 if (context.Request.IsWebSocketRequest)
+                 {
+                     // ...existing code...
+                     // TODO: Accept and handle WebSocket requests
+                    HttpListenerWebSocketContext wsContext =
+                    await context.AcceptWebSocketAsync(null);
+
+                    WebSocket clientSocket = wsContext.WebSocket;
+
+                // ADD CLIENT TO LIST
+                    lock (_lock)
+                    {
+                        _salesClients.Add(clientSocket);
+                    }
+
+                    Console.WriteLine("New Sales client connected.");
+
+                    // HANDLE THIS CLIENT (READ MESSAGES)
+                    _ = HandleSalesClientAsync(clientSocket);
+                 }
+                 else
+                 {
+                    context.Response.StatusCode = 400;
+                    context.Response.Close();
+                 }
+                }
+             }
+       public async Task ConnectAsync()
         {
-            _address = serverIp;
-            _port = serverPort;
-        }
-
-        public async Task ConnectAsync()
-        {
-            if (_isConnected) return;
-
-            _webSocket = new ClientWebSocket();
-            _cancellationTokenSource = new CancellationTokenSource();
-            var uri = new Uri($"ws://{_address}:{_port}/inventory-socket");
-
             try
             {
-                await _webSocket.ConnectAsync(uri, _cancellationTokenSource.Token);
-                _isConnected = true;
-                Console.WriteLine("WebSocket connected");
+                if (_webSocket.State == WebSocketState.Open)
+                    return;
 
-                // Start background listener
-                _ = Task.Run(() => ReceiveMessagesAsync());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Connection failed: " + e.Message);
-                _isConnected = false;
-            }
-        }
+                _webSocket = new ClientWebSocket();
 
-        public async Task<string?> SendMessageAsync(int productId, int quantity)
-        {
-            if (!_isConnected || _webSocket?.State != WebSocketState.Open)
-            {
-                await ConnectAsync();
-            }
-
-            try
-            {
-                var message = new 
-                { 
-                    productId = productId, 
-                    quantity = quantity, 
-                    action = "takeProduct" 
-                };
-
-                string jsonMessage = JsonSerializer.Serialize(message);
-                Console.WriteLine("Sending: " + jsonMessage);
-
-                byte[] msg = Encoding.UTF8.GetBytes(jsonMessage);
-
-                await _webSocket!.SendAsync(
-                    new ArraySegment<byte>(msg),
-                    WebSocketMessageType.Text,
-                    true,
-                    _cancellationTokenSource!.Token
+                await _webSocket.ConnectAsync(
+                    new Uri($"ws://{_address}:{_Inventoryport}/inventory-socket"),
+                    CancellationToken.None
                 );
 
-                return await WaitForResponseAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Send error: " + e.Message);
-                throw;
-            }
-        }
+                _isConnectedtoInventory = true;
+                Console.WriteLine("Connected to Inventory WebSocket server.");
 
-        private TaskCompletionSource<string>? _responseWaiter;
-
-        private async Task<string?> WaitForResponseAsync()
-        {
-            _responseWaiter = new TaskCompletionSource<string>();
-
-            var timeoutTask = Task.Delay(10000);
-            var completedTask = await Task.WhenAny(_responseWaiter.Task, timeoutTask);
-
-            if (completedTask == timeoutTask)
-            {
-                Console.WriteLine("Response timeout");
-                return null;
-            }
-
-            return await _responseWaiter.Task;
-        }
-
-        private async Task ReceiveMessagesAsync()
-{
-    var buffer = new byte[4096];
-
-    while (_isConnected && _webSocket?.State == WebSocketState.Open)
-    {
-        try
-        {
-            WebSocketReceiveResult result;
-            var messageBuffer = new ArraySegment<byte>(buffer);
-            var stringBuilder = new StringBuilder();
-
-            do
-            {
-                result = await _webSocket.ReceiveAsync(messageBuffer, _cancellationTokenSource.Token);
-
-                if (result.MessageType == WebSocketMessageType.Close)
+            
+                _ = Task.Run(async () =>
                 {
-                    await DisconnectAsync();
-                    return;
-                }
+                    var buffer = new byte[1024];
 
-                stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+                    while (_isConnectedtoInventory && _webSocket.State == WebSocketState.Open)
+                    {
+                        try
+                        {
+                            var result = await _webSocket.ReceiveAsync(
+                                new ArraySegment<byte>(buffer),
+                                CancellationToken.None
+                            );
 
-            } while (!result.EndOfMessage); // 🟢 Wait until complete frame
+                            if (result.MessageType == WebSocketMessageType.Close)
+                            {
+                                Console.WriteLine("Inventory WebSocket closed. Reconnecting...");
+                                _isConnectedtoInventory = false;
+                                await ConnectAsync();
+                                break;
+                            }
 
-            string message = stringBuilder.ToString();
-            Console.WriteLine("Received FULL message: " + message);
-
-            _responseWaiter?.TrySetResult(message);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Receive error: " + ex.Message);
-            await Task.Delay(1000);
-        }
-    }
-}
-
-        private async Task ReconnectAsync()
-        {
-            Console.WriteLine("Attempting to reconnect...");
-            await DisconnectAsync();
-            await Task.Delay(5000);
-            await ConnectAsync();
-        }
-
-        private async Task DisconnectAsync()
-        {
-            _isConnected = false;
-
-            if (_webSocket?.State == WebSocketState.Open)
+                            string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                            Console.WriteLine("Response from Inventory: " + message);
+                            await BroadcastToSalesClientsAsync(message);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Receive error: " + ex.Message);
+                            _isConnectedtoInventory = false;
+                            await Task.Delay(2000);
+                            await ConnectAsync();
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
             {
-                try
-                {
-                    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-                }
-                catch { }
+                Console.WriteLine($"Error connecting to Inventory WebSocket server: {ex.Message}");
+                _isConnectedtoInventory = false;
+            }
+        }
+        public async Task SendMessageAsync(int Productid, int Quantity)
+        {
+            if (!_isConnectedtoInventory)
+            {
+                Console.WriteLine("Not connected to Inventory WebSocket server.");
+                return;
             }
 
-            _webSocket?.Dispose();
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
+            try
+            {
+                string jsonMessage = JsonSerializer.Serialize(new { productId = Productid, quantity = Quantity , action = "takeProduct" });
+                byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
+                var segment = new ArraySegment<byte>(messageBytes);
+
+                await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                Console.WriteLine("Message sent to Inventory WebSocket server.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message to Inventory WebSocket server: {ex.Message}");
+            }
         }
 
-        public void Dispose()
+        private async Task HandleSalesClientAsync(WebSocket webSocket)
         {
-            DisconnectAsync().GetAwaiter().GetResult();
+            var buffer = new byte[1024];
+
+            try
+            {
+                while (webSocket.State == WebSocketState.Open)
+                {
+                    var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        break;
+                    }
+
+                    // Handle incoming messages from sales clients if needed
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Sales client error: " + ex.Message);
+            }
+            finally
+            {
+                lock (_lock)
+                {
+                    _salesClients.Remove(webSocket);
+                }
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+            }
+        }
+
+        public async Task BroadcastToSalesClientsAsync(string message)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            var segment = new ArraySegment<byte>(messageBytes);
+
+            List<WebSocket> clientsCopy;
+            lock (_lock)
+            {
+                clientsCopy = new List<WebSocket>(_salesClients);
+            }
+
+            foreach (var client in clientsCopy)
+            {
+                if (client.State == WebSocketState.Open)
+                {
+                    try
+                    {
+                        await client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error broadcasting to sales client: " + ex.Message);
+                    }
+                }
+            }
         }
     }
 }

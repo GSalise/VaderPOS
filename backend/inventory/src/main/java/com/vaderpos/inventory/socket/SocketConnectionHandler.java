@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -14,10 +17,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
 import com.vaderpos.inventory.api.service.IProductService;
-import java.util.Optional;
-
-import org.json.JSONObject;
-import org.springframework.lang.NonNull;
 
 
 public class SocketConnectionHandler extends TextWebSocketHandler implements ProductChangeListener{
@@ -66,9 +65,17 @@ public class SocketConnectionHandler extends TextWebSocketHandler implements Pro
 
     @Override
     public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws Exception {
+        
+        if (!(message instanceof TextMessage)) {
+            return;
+        }
+
+        // Ignore empty or non-JSON payload
+        if (message.getPayload() == null || message.getPayload().toString().trim().isEmpty() || !message.getPayload().toString().trim().startsWith("{")) {  
+            return;
+      }
 
         JSONObject response = new JSONObject();
-
         try{
             String payload = message.getPayload().toString();
             System.out.println("Received message from " +  session.getId() + ": " + payload);

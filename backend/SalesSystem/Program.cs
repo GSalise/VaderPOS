@@ -81,7 +81,7 @@ var app = builder.Build();
 
 var salesSocket = app.Services.GetRequiredService<SalesSocket>();
 await salesSocket.ConnectAsync();
-
+_ = salesSocket.StartSalesSocketAsync();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
