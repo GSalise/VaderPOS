@@ -3,7 +3,10 @@ IT3206N Final Project
 
 ### Inventory System Socket
 - Subscription/Live Updates
-  - Returns an entire product array everytime something is changed from the database
+  - Unlike actions, these are broadcasted to all connected clients
+  - Can be classified as global or single:
+    - global - is triggered when a product is deleted or during first connection
+    - single - is triggered when a product is updated
 - Has three parameters:
   - **action**
     - defines the action you want to make
@@ -92,5 +95,46 @@ IT3206N Final Project
     "remainingStock": 200,
     "message": "Stock has been successfully added",
     "status": "success"
+}
+```
+
+#### global sample
+```
+{
+    "type": "productUpdate",
+    "timestamp": 1764947662042,
+    "updateType": "global",
+    "products": [
+        {
+            "quantity": 6,
+            "productId": 2,
+            "price": 1000,
+            "productName": "Surf",
+            "categoryId": 1
+        },
+        {
+            "quantity": 199,
+            "productId": 4,
+            "price": 100,
+            "productName": "Safeguard",
+            "categoryId": 0
+        }
+    ]
+}
+```
+
+#### single sample
+```
+{
+    "updatedProduct": {
+        "quantity": 198,
+        "productId": 4,
+        "price": 100,
+        "productName": "Safeguard",
+        "categoryId": 0
+    },
+    "type": "productUpdate",
+    "timestamp": 1764947859898,
+    "updateType": "single"
 }
 ```
