@@ -9,7 +9,7 @@ using System.Threading;
 namespace SalesSystem.Services
 {
     public class SalesSocket
-    {
+    {   private string? _lastInventoryMessage;
         private readonly string _address = "127.0.0.1";
         private readonly int _Salesport = 5265;
         private readonly int _Inventoryport = 8080;
@@ -30,7 +30,6 @@ namespace SalesSystem.Services
                  HttpListenerContext context = await listener.GetContextAsync();
                  if (context.Request.IsWebSocketRequest)
                  {
-                     // ...existing code...
                      // TODO: Accept and handle WebSocket requests
                     HttpListenerWebSocketContext wsContext =
                     await context.AcceptWebSocketAsync(null);
@@ -44,7 +43,15 @@ namespace SalesSystem.Services
                     }
 
                     Console.WriteLine("New Sales client connected.");
-
+                    if (_lastInventoryMessage != null)
+                    {
+                        await clientSocket.SendAsync(
+                            new ArraySegment<byte>(Encoding.UTF8.GetBytes(_lastInventoryMessage)),
+                            WebSocketMessageType.Text,
+                            true,
+                            CancellationToken.None
+                        );
+                    }
                     // HANDLE THIS CLIENT (READ MESSAGES)
                     _ = HandleSalesClientAsync(clientSocket);
                  }
@@ -95,6 +102,7 @@ namespace SalesSystem.Services
                             }
 
                             string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                            _lastInventoryMessage = message;
                             Console.WriteLine("Response from Inventory: " + message);
                             await BroadcastToSalesClientsAsync(message);
                         }
