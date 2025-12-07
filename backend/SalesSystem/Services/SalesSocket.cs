@@ -11,7 +11,7 @@ namespace SalesSystem.Services
     public class SalesSocket
     {
         private readonly string _address = "127.0.0.1";
-        private readonly int _Salesport = 5264;
+        private readonly int _Salesport = 5265;
         private readonly int _Inventoryport = 8080;
         private bool _isConnectedtoInventory = false;
         private ClientWebSocket _webSocket = new ClientWebSocket();
