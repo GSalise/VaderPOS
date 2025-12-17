@@ -23,7 +23,7 @@ namespace SalesSystem.Services
              HttpListener listener = new HttpListener();
              listener.Prefixes.Add($"http://{_address}:{_Salesport}/ws/");
              listener.Start();
-
+            // saleswebsocket server link: ws://127.0.0.1:5265/ws/
              Console.WriteLine($"Sales WebSocket server started at ws://{_address}:{_Salesport}/ws/");
              while (true)
              {
