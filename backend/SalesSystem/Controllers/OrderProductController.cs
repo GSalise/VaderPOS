@@ -37,7 +37,8 @@ namespace SalesSystem.Controllers
         public async Task<ActionResult<OrderProducts>> AddProductToOrder([FromQuery] int orderId, [FromQuery] int productId)
         {
             try
-            {
+            {   
+                
                 var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId));
                 await _salesSocket.SendMessageAsync(productId, 1);
                 return Ok(orderProduct);
