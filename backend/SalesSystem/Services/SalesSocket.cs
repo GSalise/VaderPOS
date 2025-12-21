@@ -122,7 +122,7 @@ namespace SalesSystem.Services
                 _isConnectedtoInventory = false;
             }
         }
-        public async Task SendMessageAsync(int Productid, int Quantity)
+        public async Task SendMessageAsync(int Productid, int Quantity, string action = "takeProduct")
         {
             if (!_isConnectedtoInventory)
             {
@@ -132,7 +132,7 @@ namespace SalesSystem.Services
 
             try
             {
-                string jsonMessage = JsonSerializer.Serialize(new { productId = Productid, quantity = Quantity , action = "takeProduct" });
+                string jsonMessage = JsonSerializer.Serialize(new { productId = Productid, quantity = Quantity , action = action });
                 byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
                 var segment = new ArraySegment<byte>(messageBytes);
 

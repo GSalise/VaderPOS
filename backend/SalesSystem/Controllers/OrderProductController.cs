@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using SalesSystem.Data;
 using SalesSystem.DTOs;
 using SalesSystem.Interfaces;
 using SalesSystem.Models;
@@ -24,7 +23,7 @@ namespace SalesSystem.Controllers
 
         // GET: api/OrderProduct
         [HttpGet]
-        [Route("getAllOrderPorduct")]
+        [Route("getAllOrderProduct")]
         public async Task<ActionResult<IEnumerable<OrderProducts>>> GetAllOrderProducts()
         {
             var orderProducts =_mapper.Map<List<OrderProductDto>>(await _orderProductRepository.GetAllOrderProductsAsync());
@@ -34,13 +33,13 @@ namespace SalesSystem.Controllers
         // POST: api/OrderProduct
         [HttpPost]
         [Route("addProductToOrder")]
-        public async Task<ActionResult<OrderProducts>> AddProductToOrder([FromQuery] int orderId, [FromQuery] int productId)
+        public async Task<ActionResult<OrderProducts>> AddProductToOrder([FromQuery] int orderId, [FromQuery] int productId, [FromQuery] int unitprice)
         {
             try
             {   
                 
-                var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId));
-                await _salesSocket.SendMessageAsync(productId, 1);
+                var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId, unitprice));
+                await _salesSocket.SendMessageAsync(productId, 1, action: "takeProduct");
                 return Ok(orderProduct);
             }
             catch (InvalidOperationException ex)

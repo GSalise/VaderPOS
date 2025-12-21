@@ -3,7 +3,7 @@ using SalesSystem.Interfaces;
 using SalesSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
-namespace SalesSystem.Repositries
+namespace SalesSystem.Repositories
 {
     public class OrderRepository : IOrderRespository
     {

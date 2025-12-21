@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SalesSystem.Interfaces;
 using SalesSystem.Models;
-namespace SalesSystem.Repositries
+namespace SalesSystem.Repositories
 {
     public class OrderProductRepository : IOrderProductRepository
     {
@@ -20,7 +20,7 @@ namespace SalesSystem.Repositries
                 .ToListAsync();
         }
 
-        public async Task<OrderProducts> AddProductToOrder(int orderId, int productId)
+        public async Task<OrderProducts> AddProductToOrder(int orderId, int productId, decimal unitprice, int quantity = 1)
         {
             var order = await _context.orders.FindAsync(orderId);
             if (order == null)
@@ -38,8 +38,14 @@ namespace SalesSystem.Repositries
                 .FirstOrDefaultAsync(op => op.OrderId == orderId && op.ProductId == productId);
 
             if (existingOrderProduct != null)
-            {
-                existingOrderProduct.Quantity++;
+            {   
+                if( quantity == 1){
+                    existingOrderProduct.Quantity++;
+                }else{
+                    existingOrderProduct.Quantity += quantity;
+                }
+                
+                existingOrderProduct.TotalPriceAtOrder = existingOrderProduct.UnitPriceAtOrder * existingOrderProduct.Quantity;
                 _context.orderProducts.Update(existingOrderProduct);
             }
             else
@@ -48,7 +54,9 @@ namespace SalesSystem.Repositries
                 {
                     OrderId = orderId,
                     ProductId = productId,
-                    Quantity = 1
+                    Quantity = quantity,
+                    UnitPriceAtOrder = unitprice, // You might want to set this to the current product price
+                    TotalPriceAtOrder = unitprice * quantity // This should be UnitPriceAtOrder * Quantity
                 };
 
                 await _context.orderProducts.AddAsync(newOrderProduct);

@@ -45,7 +45,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SalesSystem.Data;
 using SalesSystem.Interfaces;
-using SalesSystem.Repositries;
+using SalesSystem.Repositories;
 using System.Text.Json.Serialization;
 using SalesSystem.Services;
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +57,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IOrderRespository, OrderRepository>();
 builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
-
+builder.Services.AddScoped<ISalesService, SalesService>();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
