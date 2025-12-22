@@ -68,5 +68,25 @@ namespace SalesSystem.Repositories
             await _context.SaveChangesAsync();
             return orderToUpdate;
         }
+
+        // New: mark order as checked out
+        public async Task<Order> CheckoutOrderAsync(int id)
+        {
+            var order = await _context.orders.FirstOrDefaultAsync(o => o.OrderId == id);
+            if (order == null)
+            {
+                throw new InvalidOperationException($"Order with ID {id} not found.");
+            }
+
+            if (order.isCheckedOut)
+            {
+                // already checked out — return as-is (or you can throw if you prefer)
+                return order;
+            }
+
+            order.isCheckedOut = true;
+            await _context.SaveChangesAsync();
+            return order;
+        }
     }
 }

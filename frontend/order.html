@@ -1,0 +1,572 @@
+﻿<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - VaderPOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f9;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+            button:hover {
+                background: #005fa3;
+            }
+
+        input {
+            padding: 6px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧾 Orders</h1>-->
+<!-- ===================== CUSTOMERS ===================== -->
+<!--<section>
+    <h2>Customers</h2>
+    <button onclick="loadCustomers()">Load Customers</button>
+
+    <h3>Add Customer</h3>
+    <input id="custName" placeholder="Name">
+    <input id="custContact" placeholder="Contact">
+    <button onclick="addCustomer()">Add</button>
+
+    <table id="customerTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Contact</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</section>-->
+<!-- ===================== ORDERS ===================== -->
+<!--<section>
+    <h2>Orders</h2>
+
+    <button onclick="loadOrders()">Load Orders</button>
+
+    <h3>Add Order</h3>
+    <input id="orderCustomerId" placeholder="Customer ID" type="number">
+    <input id="orderDate" type="date">
+    <button onclick="addOrder()">Add</button>
+
+    <h3>Delete Order</h3>
+    <input id="orderIdtoDelete" placeholder="Order ID">
+    <button onclick="deleteOrder()">Delete</button>
+
+    <table id="orderTable">
+        <thead>
+            <tr><th>ID</th><th>Customer</th><th>Date</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>-->
+<!-- ===================== ORDER PRODUCTS ===================== -->
+<!--<section>
+        <h2>Order Products</h2>
+
+        <button onclick="loadOrderProducts()">Load Order Products</button>
+
+        <h3>Add</h3>
+        <input id="opOrderId" placeholder="Order ID" type="number">
+        <input id="opProductId" placeholder="Product ID" type="number">
+        <button onclick="addOrderProduct()">Add Product</button>
+
+        <button onclick="subtractOrderProductQuantity()">Subtract Quantities</button>
+
+        <table id="orderProductTable">
+            <thead>
+                <tr><th>Order ID</th><th>Product ID</th><th>Quantity</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <script>
+        const API_BASE = "http://localhost:5264/api";
+        const PRODUCT_API = "http://localhost:8080/api/products";
+
+        async function loadCustomers() {
+            const res = await fetch(`${API_BASE}/Customer/getAllCustomers`);
+            const data = await res.json();
+            const table = document.querySelector("#customerTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => table.insertAdjacentHTML("beforeend",
+                `<tr><td>${c.customerId}</td><td>${c.name}</td><td>${c.contact_No}</td></tr>`
+            ));
+        }
+
+        async function addCustomer() {
+            const name = custName.value.trim();
+            const contact = custContact.value.trim();
+            if (!name || !contact) return alert("Missing fields.");
+
+            const res = await fetch(`${API_BASE}/Customer/addCustomer`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, contact_No: contact })
+            });
+
+            if (res.ok) { alert("Added!"); loadCustomers(); }
+        }
+
+        async function loadOrders() {
+            const res = await fetch(`${API_BASE}/Order/getAllOrders`);
+            const data = await res.json();
+
+            const table = document.querySelector("#orderTable tbody");
+            table.innerHTML = "";
+
+            const active = data.filter(o => !o.isCheckedOut);
+
+            active.forEach(o =>
+                table.insertAdjacentHTML("beforeend",
+                    `<tr><td>${o.orderId}</td><td>${o.customerId}</td><td>${new Date(o.orderDate).toLocaleDateString()}</td></tr>`
+                )
+            );
+        }
+
+        async function addOrder() {
+            const customerId = parseInt(document.getElementById("orderCustomerId").value);
+            const orderDate = document.getElementById("orderDate").value;
+            if (!customerId || !orderDate) return alert("Please fill out all fields.");
+
+            const res = await fetch(`${API_BASE}/Order/addOrder`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ customerId, orderDate })
+            });
+
+            if (res.ok) {
+                alert("Order added!");
+                loadOrders();
+            } else {
+                alert("Failed to add order.");
+            }
+        }
+
+        async function deleteOrder() {
+            const id = orderIdtoDelete.value.trim();
+            if (!id) return alert("Enter ID.");
+
+            const res = await fetch(`${API_BASE}/Order/deleteOrder/${id}`, { method: "DELETE" });
+
+            if (res.ok) { alert("Deleted!"); loadOrders(); }
+        }
+
+        async function loadOrderProducts() {
+            const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            const data = await res.json();
+            const table = document.querySelector("#orderProductTable tbody");
+            table.innerHTML = "";
+
+            data.forEach(op =>
+                table.insertAdjacentHTML("beforeend",
+                    `<tr><td>${op.orderId}</td><td>${op.productId}</td><td>${op.quantity}</td></tr>`
+                )
+            );
+        }
+
+        async function addOrderProduct() {
+            const orderId = +opOrderId.value;
+            const productId = +opProductId.value;
+
+            if (!orderId || !productId) return alert("Invalid fields.");
+
+            const res = await fetch(
+                `${API_BASE}/OrderProduct/addProductToOrder?orderId=${orderId}&productId=${productId}`,
+                { method: "POST" }
+            );
+
+            if (res.ok) { alert("Added!"); loadOrderProducts(); }
+        }
+
+        async function subtractOrderProductQuantity() {
+            const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            const orderProducts = await opRes.json();
+
+            for (const op of orderProducts) {
+                const productRes = await fetch(`${PRODUCT_API}/${op.productId}`);
+                const product = await productRes.json();
+
+                const newQty = Math.max(0, product.quantity - op.quantity);
+
+                await fetch(`${PRODUCT_API}/${op.productId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...product, quantity: newQty })
+                });
+            }
+
+            alert("Updated!");
+        }
+    </script>
+
+</body>
+</html>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - VaderPOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f9;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #005fa3;
+            }
+
+        input {
+            padding: 6px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Orders</h1>
+
+    <!-- Customers Section -->
+    <section>
+        <h2>Customers</h2>
+        <button onclick="loadCustomers()">Load Customers</button>
+
+        <h3>Add Customer</h3>
+        <input id="custName" placeholder="Name">
+        <input id="custContact" placeholder="Contact">
+        <button onclick="addCustomer()">Add</button>
+
+        <table id="customerTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Contact</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- Orders Section -->
+    <section>
+        <h2>Orders</h2>
+        <button onclick="loadOrders()">Load Orders</button>
+
+        <h3>Add Order</h3>
+        <input id="orderCustomerId" placeholder="Customer ID" type="number">
+        <input id="orderDate" type="date">
+        <button onclick="addOrder()">Add</button>
+
+        <h3>Delete Order</h3>
+        <input id="orderIdtoDelete" placeholder="Order ID">
+        <button onclick="deleteOrder()">Delete</button>
+
+        <table id="orderTable">
+            <thead><tr><th>ID</th><th>Customer</th><th>Date</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- Order Products Section -->
+    <section>
+        <h2>Order Products</h2>
+        <button onclick="loadOrderProducts()">Load Order Products</button>
+
+        <h3>Add Product</h3>
+        <input id="opOrderId" placeholder="Order ID" type="number">
+        <input id="opProductId" placeholder="Product ID" type="number">
+        <!--<input id="opQuantity" placeholder="Quantity" type="number">-->
+        <button onclick="addOrderProduct()">Add Product</button>
+
+        <button onclick="subtractOrderProductQuantity()">Subtract Quantities</button>
+
+        <table id="orderProductTable">
+            <thead><tr><th>Order ID</th><th>Product ID</th><th>Quantity</th><th>Subtotal</th></tr></thead>
+            <tbody></tbody>
+        </table>
+
+        <h3>Total Cost: <span id="totalCost">₱0.00</span></h3>
+    </section>
+
+    <script>
+        const API_BASE = "http://localhost:5264/api";
+        const PRODUCT_API = "http://localhost:8080/api/products";
+
+        let productsCache = [];
+
+        async function loadProductsCache() {
+            const res = await fetch(PRODUCT_API);
+            productsCache = await res.json();
+        }
+
+        // ---------- Customers ----------
+        async function loadCustomers() {
+            const res = await fetch(`${API_BASE}/Customer/getAllCustomers`);
+            const data = await res.json();
+            const table = document.querySelector("#customerTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => table.insertAdjacentHTML("beforeend",
+                `<tr><td>${c.customerId}</td><td>${c.name}</td><td>${c.contact_No}</td></tr>`));
+        }
+
+        async function addCustomer() {
+            const name = custName.value.trim();
+            const contact = custContact.value.trim();
+            if (!name || !contact) return alert("Missing fields.");
+            const res = await fetch(`${API_BASE}/Customer/addCustomer`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, contact_No: contact })
+            });
+            if (res.ok) { alert("Added!"); loadCustomers(); }
+        }
+
+        // ---------- Orders ----------
+        async function loadOrders() {
+            const res = await fetch(`${API_BASE}/Order/getAllOrders`);
+            const data = await res.json();
+            const table = document.querySelector("#orderTable tbody");
+            table.innerHTML = "";
+            data.filter(o => !o.isCheckedOut).forEach(o =>
+                table.insertAdjacentHTML("beforeend",
+                    `<tr><td>${o.orderId}</td><td>${o.customerId}</td><td>${new Date(o.orderDate).toLocaleDateString()}</td></tr>`));
+        }
+
+        async function addOrder() {
+            const customerId = parseInt(document.getElementById("orderCustomerId").value);
+            const orderDate = document.getElementById("orderDate").value;
+            if (!customerId || !orderDate) return alert("Please fill out all fields.");
+            const res = await fetch(`${API_BASE}/Order/addOrder`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ customerId, orderDate })
+            });
+            if (res.ok) { alert("Order added!"); loadOrders(); }
+            else alert("Failed to add order.");
+        }
+
+        async function deleteOrder() {
+            const id = orderIdtoDelete.value.trim();
+            if (!id) return alert("Enter ID.");
+            const res = await fetch(`${API_BASE}/Order/deleteOrder/${id}`, { method: "DELETE" });
+            if (res.ok) { alert("Deleted!"); loadOrders(); }
+        }
+
+        // ---------- Order Products ----------
+        async function loadOrderProducts() {
+            await loadProductsCache(); // ensure productsCache is updated
+            const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            const data = await res.json();
+            const table = document.querySelector("#orderProductTable tbody");
+            table.innerHTML = "";
+
+            let totalCost = 0;
+
+            data.forEach(op => {
+                const product = productsCache.find(p => p.productId === op.productId);
+                const subtotal = product ? product.price * op.quantity : 0;
+                totalCost += subtotal;
+
+                table.insertAdjacentHTML("beforeend",
+                    `<tr>
+                    <td>${op.orderId}</td>
+                    <td>${op.productId}</td>
+                    <td>${op.quantity}</td>
+                    <td>₱${subtotal.toFixed(2)}</td>
+                </tr>`
+                );
+            });
+
+            document.getElementById("totalCost").innerText = `₱${totalCost.toFixed(2)}`;
+        }
+
+        async function addOrderProduct() {
+            const orderId = +opOrderId.value;
+            const productId = +opProductId.value;
+            var quantity = 1;
+
+            if (!orderId || !productId) return alert("Invalid fields.");
+
+            const res = await fetch(
+                `${API_BASE}/OrderProduct/addProductToOrder?orderId=${orderId}&productId=${productId}&quantity=${quantity}`,
+                { method: "POST" }
+            );
+            if (res.ok) { alert("Added!"); loadOrderProducts(); }
+        }
+
+        async function subtractOrderProductQuantity() {
+            //await loadProductsCache();
+            //const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            //const orderProducts = await opRes.json();
+
+            //for (const op of orderProducts) {
+            //    const product = productsCache.find(p => p.productId === op.productId);
+            //    if (!product) continue;
+            //    const newQty = Math.max(0, product.quantity - op.quantity);
+            //    await fetch(`${PRODUCT_API}/${op.productId}`, {
+            //        method: "PUT",
+            //        headers: { "Content-Type": "application/json" },
+            //        body: JSON.stringify({ ...product, quantity: newQty })
+            //    });
+            //}
+
+            //alert("Updated!");
+            //loadOrderProducts();
+
+            try {
+                // 1. Get all OrderProducts
+                const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+                if (!opRes.ok) throw new Error("Failed to fetch Order Products.");
+                const orderProducts = await opRes.json();
+
+                const checkedOutOrders = new Set();
+
+                // 2. Loop through each OrderProduct
+                for (const op of orderProducts) {
+                    const orderId = op.orderId;
+                    const productId = op.productId;
+                    const qtyToSubtract = op.quantity;
+
+                    // 3. Get current product info
+                    const prodRes = await fetch(`${PRODUCT_API}/${productId}`);
+                    if (!prodRes.ok) {
+                        console.error(`Failed to fetch Product ID ${productId}`);
+                        continue; // skip this product
+                    }
+                    const product = await prodRes.json();
+
+                    // 🔹 Log product info
+                    console.log(`Processing Order ID: ${orderId}, Product ID: ${productId}`, product, `Quantity to subtract: ${qtyToSubtract}`);
+
+                    // 4. Update product quantity
+                    const newQuantity = product.quantity - qtyToSubtract;
+                    const updatedProduct = {
+                        ...product,
+                        quantity: newQuantity >= 0 ? newQuantity : 0
+                    };
+
+                    // 5. Send updated product via PUT
+                    const updateRes = await fetch(`${PRODUCT_API}/${productId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedProduct)
+                    });
+
+                    if (!updateRes.ok) {
+                        console.error(`Failed to update Product ID ${productId}`);
+                    }
+
+                    // 6. Checkout order (once per orderId)
+                    if (!checkedOutOrders.has(orderId)) {
+                        const checkoutRes = await fetch(
+                            `${API_BASE}/Order/checkoutOrder/${encodeURIComponent(orderId)}`,
+                            { method: "POST" }
+                        );
+
+                        if (!checkoutRes.ok) {
+                            console.error(`Failed to checkout Order ID ${orderId}`);
+                        } else {
+                            checkedOutOrders.add(orderId);
+                        }
+                    }
+                }
+
+                alert("✔ Quantities subtracted and ✔ All related orders checked out!");
+                loadOrderProducts();
+                loadOrders();
+
+            } catch (err) {
+                console.error(err);
+                alert("Error processing subtraction and checkout. Check console.");
+            }
+        }
+    </script>
+</body>
+</html>
+
