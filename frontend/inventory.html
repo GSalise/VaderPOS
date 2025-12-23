@@ -1,0 +1,381 @@
+﻿<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory - VaderPOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #005fa3;
+            }
+
+        input {
+            padding: 6px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📦 Inventory</h1>-->
+<!-- ===================== CATEGORIES ===================== -->
+<!--<section>
+    <h2>Categories</h2>
+    <button onclick="loadCategories()">Load Categories</button>
+
+    <h3>Add Category</h3>
+    <input id="categoryName" placeholder="Category Name" />
+    <input id="categoryId" placeholder="Category ID (optional)" type="number" />
+    <button onclick="addCategory()">Add Category</button>
+
+    <h3>Delete Category</h3>
+    <input id="categoryIdToDelete" placeholder="Category ID" type="number" />
+    <button onclick="deleteCategory()">Delete Category</button>
+
+    <table id="categoryTable">
+        <thead><tr><th>ID</th><th>Name</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</section>-->
+<!-- ===================== PRODUCTS ===================== -->
+<!--<section>
+        <h2>Products</h2>
+        <button onclick="loadProducts()">Load Products</button>
+
+        <h3>Add Product</h3>
+        <input id="productName" placeholder="Product Name" />
+        <input id="productPrice" placeholder="Price" type="number" />
+        <input id="productQuantity" placeholder="Quantity" />
+        <input id="productCategoryId" placeholder="Category ID" type="number" />
+        <button onclick="addProduct()">Add Product</button>
+
+        <h3>Delete Product</h3>
+        <input id="productIdToDelete" placeholder="Product ID" type="number" />
+        <button onclick="deleteProduct()">Delete Product</button>
+
+        <table id="productTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Price</th><th>Quantity</th><th>Category ID</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <script>
+        const CATEGORY_API = "http://localhost:8080/api/categories";
+        const PRODUCT_API = "http://localhost:8080/api/products";
+
+        async function loadCategories() {
+            const res = await fetch(CATEGORY_API);
+            const data = await res.json();
+            const table = document.querySelector("#categoryTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => {
+                table.insertAdjacentHTML("beforeend",
+                    `<tr><td>${c.categoryId}</td><td>${c.categoryName}</td></tr>`
+                );
+            });
+        }
+
+        async function addCategory() {
+            const name = document.getElementById("categoryName").value.trim();
+            const id = parseInt(document.getElementById("categoryId").value);
+            if (!name) return alert("Please enter a name.");
+
+            const payload = id ? { categoryId: id, categoryName: name } : { categoryName: name };
+
+            const res = await fetch(CATEGORY_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) { alert("Added!"); loadCategories(); }
+            else alert("Failed.");
+        }
+
+        async function deleteCategory() {
+            const id = document.getElementById("categoryIdToDelete").value.trim();
+            if (!id) return alert("Enter ID.");
+
+            const res = await fetch(`${CATEGORY_API}/${id}`, { method: "DELETE" });
+            if (res.ok) { alert("Deleted!"); loadCategories(); }
+            else alert("Failed.");
+        }
+
+        async function loadProducts() {
+            const res = await fetch(PRODUCT_API);
+            const data = await res.json();
+            const table = document.querySelector("#productTable tbody");
+            table.innerHTML = "";
+            data.forEach(p => {
+                table.insertAdjacentHTML("beforeend",
+                    `<tr>
+                            <td>${p.productId}</td>
+                            <td>${p.productName}</td>
+                            <td>${p.price}</td>
+                            <td>${p.quantity}</td>
+                            <td>${p.categoryId}</td>
+                        </tr>`
+                );
+            });
+        }
+
+        async function addProduct() {
+            const name = document.getElementById("productName").value.trim();
+            const qty = document.getElementById("productQuantity").value.trim();
+            const price = parseFloat(document.getElementById("productPrice").value);
+            const categoryId = parseInt(document.getElementById("productCategoryId").value);
+
+            if (!name || !qty || isNaN(price) || isNaN(categoryId))
+                return alert("Invalid fields.");
+
+            const res = await fetch(PRODUCT_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productName: name, quantity: qty, price, categoryId })
+            });
+
+            if (res.ok) { alert("Added!"); loadProducts(); }
+            else alert("Failed.");
+        }
+
+        async function deleteProduct() {
+            const id = document.getElementById("productIdToDelete").value.trim();
+            if (!id) return alert("Enter ID.");
+
+            const res = await fetch(`${PRODUCT_API}/${id}`, { method: "DELETE" });
+            if (res.ok) { alert("Deleted!"); loadProducts(); }
+            else alert("Failed.");
+        }
+    </script>
+
+</body>
+</html>-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory - VaderPOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #005fa3;
+            }
+
+        input {
+            padding: 6px;
+            margin: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Inventory</h1>
+
+    <!-- Categories Section -->
+    <section>
+        <h2>Categories</h2>
+        <button onclick="loadCategories()">Load Categories</button>
+
+        <h3>Add Category</h3>
+        <input id="categoryName" placeholder="Category Name" />
+        <input id="categoryId" placeholder="Category ID (optional)" type="number" />
+        <button onclick="addCategory()">Add Category</button>
+
+        <h3>Delete Category</h3>
+        <input id="categoryIdToDelete" placeholder="Category ID" type="number" />
+        <button onclick="deleteCategory()">Delete Category</button>
+
+        <table id="categoryTable">
+            <thead><tr><th>ID</th><th>Name</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <!-- Products Section -->
+    <section>
+        <h2>Products</h2>
+        <button onclick="loadProducts()">Load Products</button>
+
+        <h3>Add Product</h3>
+        <input id="productName" placeholder="Product Name" />
+        <input id="productPrice" placeholder="Price" type="number" />
+        <input id="productQuantity" placeholder="Quantity" />
+        <input id="productCategoryId" placeholder="Category ID" type="number" />
+        <button onclick="addProduct()">Add Product</button>
+
+        <h3>Delete Product</h3>
+        <input id="productIdToDelete" placeholder="Product ID" type="number" />
+        <button onclick="deleteProduct()">Delete Product</button>
+
+        <table id="productTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Price</th><th>Quantity</th><th>Category ID</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <script>
+        const CATEGORY_API = "http://localhost:8080/api/categories";
+        const PRODUCT_API = "http://localhost:8080/api/products";
+
+        async function loadCategories() {
+            const res = await fetch(CATEGORY_API);
+            const data = await res.json();
+            const table = document.querySelector("#categoryTable tbody");
+            table.innerHTML = "";
+            data.forEach(c => table.insertAdjacentHTML("beforeend",
+                `<tr><td>${c.categoryId}</td><td>${c.categoryName}</td></tr>`
+            ));
+        }
+
+        async function addCategory() {
+            const name = document.getElementById("categoryName").value.trim();
+            const id = parseInt(document.getElementById("categoryId").value);
+            if (!name) return alert("Please enter a name.");
+            const payload = id ? { categoryId: id, categoryName: name } : { categoryName: name };
+            const res = await fetch(CATEGORY_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) { alert("Added!"); loadCategories(); }
+            else alert("Failed.");
+        }
+
+        async function deleteCategory() {
+            const id = document.getElementById("categoryIdToDelete").value.trim();
+            if (!id) return alert("Enter ID.");
+            const res = await fetch(`${CATEGORY_API}/${id}`, { method: "DELETE" });
+            if (res.ok) { alert("Deleted!"); loadCategories(); }
+            else alert("Failed.");
+        }
+
+        async function loadProducts() {
+            const res = await fetch(PRODUCT_API);
+            const data = await res.json();
+            const table = document.querySelector("#productTable tbody");
+            table.innerHTML = "";
+            data.forEach(p => table.insertAdjacentHTML("beforeend",
+                `<tr>
+                        <td>${p.productId}</td>
+                        <td>${p.productName}</td>
+                        <td>${p.price}</td>
+                        <td>${p.quantity}</td>
+                        <td>${p.categoryId}</td>
+                    </tr>`
+            ));
+        }
+
+        async function addProduct() {
+            const name = document.getElementById("productName").value.trim();
+            const qty = document.getElementById("productQuantity").value.trim();
+            const price = parseFloat(document.getElementById("productPrice").value);
+            const categoryId = parseInt(document.getElementById("productCategoryId").value);
+            if (!name || !qty || isNaN(price) || isNaN(categoryId)) return alert("Invalid fields.");
+            const res = await fetch(PRODUCT_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productName: name, quantity: qty, price, categoryId })
+            });
+            if (res.ok) { alert("Added!"); loadProducts(); }
+            else alert("Failed.");
+        }
+
+        async function deleteProduct() {
+            const id = document.getElementById("productIdToDelete").value.trim();
+            if (!id) return alert("Enter ID.");
+            const res = await fetch(`${PRODUCT_API}/${id}`, { method: "DELETE" });
+            if (res.ok) { alert("Deleted!"); loadProducts(); }
+            else alert("Failed.");
+        }
+    </script>
+</body>
+</html>
+

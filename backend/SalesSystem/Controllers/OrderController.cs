@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SalesSystem.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using SalesSystem.Interfaces;
-using SalesSystem.Repositries;
 using SalesSystem.Models;
 using SalesSystem.DTOs;
 using AutoMapper;
-using System.Collections.Generic;
+using SalesSystem.Services;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]
@@ -15,10 +12,13 @@ namespace SalesSystem.Controllers
     {
         private readonly IOrderRespository _orderRepository;
         private readonly IMapper _mapper;
-        public OrderController( IOrderRespository orderRepository, IMapper mapper)
+
+        private readonly SalesSocket _salesSocket;
+        public OrderController( IOrderRespository orderRepository, IMapper mapper, SalesSocket salesSocket)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _salesSocket = salesSocket;
         }
 
         [HttpGet("getAllOrders")]
@@ -68,6 +68,34 @@ namespace SalesSystem.Controllers
             var updatedOrderDto = _mapper.Map<OrderDto>(updatedOrder);
             return Ok(updatedOrderDto);
         }
+
+        // New: checkout endpoint
+        // POST: api/order/checkoutOrder/5
+        [HttpPost("checkoutOrder/{id}")]
+        public async Task<IActionResult> CheckoutOrder(int id)
+        {
+            try
+            {
+                var updatedOrder = await _orderRepository.CheckoutOrderAsync(id);
+
+                if (updatedOrder.OrderProducts != null)
+                {
+                    foreach (var op in updatedOrder.OrderProducts)
+                    {
+                        await _salesSocket.SendMessageAsync(op.ProductId, op.Quantity);
+                    }
+                }
+
+                var dto = _mapper.Map<OrderDto>(updatedOrder);
+                return Ok(dto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+
         // DELETE: api/order/5
         [HttpDelete("deleteOrder/{id}")]
         public async Task<IActionResult> DeleteOrder(int id)

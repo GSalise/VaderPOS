@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SalesSystem.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using SalesSystem.Interfaces;
-using SalesSystem.Repositries;
 using SalesSystem.Models;
 using AutoMapper;
 using SalesSystem.DTOs;
-using System.Collections.Generic;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]

@@ -4,7 +4,7 @@ namespace SalesSystem.Interfaces
     public interface IOrderProductRepository
     {
         Task<IEnumerable<OrderProducts>> GetAllOrderProductsAsync();
-        Task<OrderProducts> AddProductToOrder(int orderID,int productID);
-        
+        Task<OrderProducts> AddProductToOrder(int orderID,int productID, decimal unitprice, int quantity = 1);
+
     }
 }

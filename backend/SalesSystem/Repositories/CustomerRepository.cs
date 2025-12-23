@@ -2,7 +2,7 @@
 using SalesSystem.Data;
 using SalesSystem.Models;
 using Microsoft.EntityFrameworkCore;
-namespace SalesSystem.Repositries
+namespace SalesSystem.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {

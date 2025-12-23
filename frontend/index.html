@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VaderPOS - Simple Frontend</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -59,7 +60,17 @@
             margin: 5px;
             width: 200px;
         }
+
+        .inline-controls {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+
 </head>
 <body>
     <h1>🧾 VaderPOS - Basic Frontend</h1>
@@ -148,8 +159,14 @@
         <button onclick="addOrder()">➕ Add Order</button>
 
         <h3>Delete Order</h3>
-        <input id="orderIdtoDelete" placeholder="Oder ID" type="number" />
+        <input id="orderIdtoDelete" placeholder="Order ID" type="number" />
         <button onclick="deleteOrder()">➕ Delete Order</button>
+
+        <h3>Check Out Order</h3>
+        <div class="inline-controls">
+            <input id="orderIdToCheckout" placeholder="Order ID" type="number" />
+            <button onclick="checkoutOrder()">Check out order</button>
+        </div>
 
         <table id="orderTable">
             <thead>
@@ -157,7 +174,7 @@
                     <th>ID</th>
                     <th>Customer ID</th>
                     <th>Order Date</th>
-                    <th>Actions</th>
+                    <th>Checked Out</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -177,8 +194,9 @@
         <input id="opProductId" placeholder="Product ID" type="number" />
         <!--<input id="opQuantity" placeholder="Quantity" type="number" />-->
         <button onclick="addOrderProduct()">➕ Add Order Product</button>
-        <<button onclick="subtractOrderProductQuantity()">➖ Subtract Quantity</button>
+        <button onclick="subtractAllAndCheckout()">Subtract Quantity and Checkout Order</button>
 
+        <p id="totalCostDisplay" style="font-weight:bold; margin-top:10px;">Total Cost: ₱0.00</p>
 
         <table id="orderProductTable">
             <thead>
@@ -196,6 +214,8 @@
         const API_BASE = "http://localhost:5264/api";
         const CATEGORY_API = "http://localhost:8080/api/categories";
         const PRODUCT_API = "http://localhost:8080/api/products";
+
+        let productsCache = [];
 
         // ======== CUSTOMERS ========
         async function loadCustomers() {
@@ -241,12 +261,13 @@
 
             activeOrders.forEach(o => {
                 const row = `
-                    <tr>
-                        <td>${o.orderId}</td>
-                        <td>${o.customerId}</td>
-                        <td>${new Date(o.orderDate).toLocaleDateString()}</td>
-                    </tr>
-                `;
+                            <tr>
+                                <td>${o.orderId}</td>
+                                <td>${o.customerId}</td>
+                                <td>${new Date(o.orderDate).toLocaleDateString()}</td>
+                                <td>${o.isCheckedOut ? "Yes" : "No"}</td>
+                            </tr>
+                        `;
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
@@ -297,8 +318,36 @@
             }
         }
 
-        // ======== ORDER PRODUCTS ========
+        // New: checkout an order
+        async function checkoutOrder() {
+            const id = document.getElementById("orderIdToCheckout").value.trim();
+            if (!id) {
+                alert("Please enter an Order ID to check out.");
+                return;
+            }
 
+            if (!confirm(`Check out order ID ${id}? This will mark the order as checked out.`)) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/Order/checkoutOrder/${encodeURIComponent(id)}`, {
+                    method: "POST"
+                });
+
+                if (res.ok) {
+                    alert(`Order ID ${id} checked out.`);
+                    document.getElementById("orderIdToCheckout").value = "";
+                    loadOrders();
+                } else {
+                    const text = await res.text();
+                    alert(`Failed to check out order. Server: ${text}`);
+                }
+            } catch (err) {
+                alert("Error connecting to server. Please check if backend is running.");
+                console.error(err);
+            }
+        }
+
+        // ======== ORDER PRODUCTS ========
         async function loadOrderProducts() {
             const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
             if (!res.ok) {
@@ -310,45 +359,14 @@
             table.innerHTML = "";
             data.forEach(op => {
                 const row = `
-                    <tr>
-                        <td>${op.orderId}</td>
-                        <td>${op.productId}</td>
-                        <td>${op.quantity}</td>
-                    </tr>`;
+                            <tr>
+                                <td>${op.orderId}</td>
+                                <td>${op.productId}</td>
+                                <td>${op.quantity}</td>
+                            </tr>`;
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
-
-//         async function loadOrderProducts() {
-//     try {
-//         const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
-//         if (!res.ok) {
-//             alert("Failed to load Order Products.");
-//             return;
-//         }
-
-//         const data = await res.json();
-
-//         // Filter only order products where the order is NOT checked out
-//         const filtered = data.filter(op => op.order && op.order.isCheckedOut === false);
-
-//         const table = document.querySelector("#orderProductTable tbody");
-//         table.innerHTML = "";
-
-//         filtered.forEach(op => {
-//             const row = `
-//                 <tr>
-//                     <td>${op.orderId}</td>
-//                     <td>${op.productId}</td>
-//                     <td>${op.quantity}</td>
-//                 </tr>`;
-//             table.insertAdjacentHTML("beforeend", row);
-//         });
-//     } catch (err) {
-//         console.error(err);
-//         alert("Error loading Order Products.");
-//     }
-// }
 
         async function addOrderProduct() {
             const orderId = parseInt(document.getElementById("opOrderId").value, 10);
@@ -368,6 +386,7 @@
                 });
 
                 if (res.ok) {
+                    updateTotalCost(orderId);
                     alert("Order Product added!");
                     document.getElementById("opOrderId").value = "";
                     document.getElementById("opProductId").value = "";
@@ -382,9 +401,6 @@
             }
         }
 
-
-
-
         async function loadCategories() {
             const res = await fetch(CATEGORY_API);
             const data = await res.json();
@@ -392,9 +408,9 @@
             table.innerHTML = "";
             data.forEach(c => {
                 const row = `<tr>
-            <td>${c.categoryId}</td>
-            <td>${c.categoryName}</td>
-        </tr>`;
+                    <td>${c.categoryId}</td>
+                    <td>${c.categoryName}</td>
+                </tr>`;
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
@@ -430,16 +446,17 @@
         async function loadProducts() {
             const res = await fetch(PRODUCT_API);
             const data = await res.json();
+            productsCache = data;
             const table = document.querySelector("#productTable tbody");
             table.innerHTML = "";
             data.forEach(p => {
                 const row = `<tr>
-            <td>${p.productId}</td>
-            <td>${p.productName}</td>
-            <td>${p.price}</td>
-            <td>${p.quantity}</td>
-            <td>${p.categoryId}</td>
-        </tr>`;
+                    <td>${p.productId}</td>
+                    <td>${p.productName}</td>
+                    <td>${p.price}</td>
+                    <td>${p.quantity}</td>
+                    <td>${p.categoryId}</td>
+                </tr>`;
                 table.insertAdjacentHTML("beforeend", row);
             });
         }
@@ -522,17 +539,107 @@
             }
         }
 
+        //async function subtractAllAndCheckout() {
+        //    try {
+        //        // 1. Get all OrderProducts
+        //        const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+        //        if (!opRes.ok) throw new Error("Failed to fetch Order Products.");
+        //        const orderProducts = await opRes.json();
+
+        //        // Track which orders we already checked out
+        //        const checkedOutOrders = new Set();
+
+        //        // 2. Loop through each OrderProduct
+        //        for (const op of orderProducts) {
+        //            const orderId = op.orderId;
+        //            const productId = op.productId;
+        //            const qtyToSubtract = op.quantity;
+
+        //            // 3. Get current product info
+        //            const prodRes = await fetch(`${PRODUCT_API}/${productId}`);
+        //            if (!prodRes.ok) {
+        //                console.error(`Failed to fetch Product ID ${productId}`);
+        //                continue; // skip this product
+        //            }
+        //            const product = await prodRes.json();
+
+        //            // 4. Update product quantity
+        //            const newQuantity = product.quantity - qtyToSubtract;
+        //            const updatedProduct = {
+        //                ...product,
+        //                quantity: newQuantity >= 0 ? newQuantity : 0 // avoid negative
+        //            };
+
+        //            // 5. Send updated product via PUT
+        //            const updateRes = await fetch(`${PRODUCT_API}/${productId}`, {
+        //                method: "PUT",
+        //                headers: { "Content-Type": "application/json" },
+        //                body: JSON.stringify(updatedProduct)
+        //            });
+
+        //            if (!updateRes.ok) {
+        //                console.error(`Failed to update Product ID ${productId}`);
+        //            }
+
+        //            // 6. CHECKOUT THE ORDER (only once per orderId)
+        //            if (!checkedOutOrders.has(orderId)) {
+        //                const checkoutRes = await fetch(
+        //                    `${API_BASE}/Order/checkoutOrder/${encodeURIComponent(orderId)}`,
+        //                    { method: "POST" }
+        //                );
+
+        //                if (!checkoutRes.ok) {
+        //                    console.error(`Failed to checkout Order ID ${orderId}`);
+        //                } else {
+        //                    checkedOutOrders.add(orderId);
+        //                }
+        //            }
+        //        }
+
+        //        alert("✔ Quantities subtracted and ✔ All related orders checked out!");
+        //        loadProducts();
+        //        loadOrderProducts();
+        //        loadOrders();
+
+        //    } catch (err) {
+        //        console.error(err);
+        //        alert("Error processing subtraction and checkout. Check console.");
+        //    }
+        //}
 
 
-        async function subtractOrderProductQuantity() {
+        async function updateTotalCost(orderId) {
+            const res = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
+            const orderProducts = await res.json();
+
+            // Filter products for this order
+            const relevantProducts = orderProducts.filter(op => op.orderId === orderId);
+
+            let total = 0;
+            relevantProducts.forEach(op => {
+                const product = productsCache.find(p => p.productId === op.productId);
+                if (product) total += product.price * op.quantity;
+            });
+
+            console.log(`Total cost for Order ${orderId}: ${total}`);
+            // Update UI element, e.g.:
+            document.getElementById("totalCostDisplay").innerText = `Total Cost: ₱${total.toFixed(2)}`;
+        }
+
+
+
+        async function subtractAllAndCheckout() {
             try {
                 // 1. Get all OrderProducts
                 const opRes = await fetch(`${API_BASE}/OrderProduct/getAllOrderPorduct`);
                 if (!opRes.ok) throw new Error("Failed to fetch Order Products.");
                 const orderProducts = await opRes.json();
 
+                const checkedOutOrders = new Set();
+
                 // 2. Loop through each OrderProduct
                 for (const op of orderProducts) {
+                    const orderId = op.orderId;
                     const productId = op.productId;
                     const qtyToSubtract = op.quantity;
 
@@ -544,14 +651,17 @@
                     }
                     const product = await prodRes.json();
 
+                    // 🔹 Log product info
+                    console.log(`Processing Order ID: ${orderId}, Product ID: ${productId}`, product, `Quantity to subtract: ${qtyToSubtract}`);
+
                     // 4. Update product quantity
                     const newQuantity = product.quantity - qtyToSubtract;
                     const updatedProduct = {
                         ...product,
-                        quantity: newQuantity >= 0 ? newQuantity : 0 // prevent negative qty
+                        quantity: newQuantity >= 0 ? newQuantity : 0
                     };
 
-                    // 5. Send updated product via POST (retain other fields)
+                    // 5. Send updated product via PUT
                     const updateRes = await fetch(`${PRODUCT_API}/${productId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
@@ -561,16 +671,96 @@
                     if (!updateRes.ok) {
                         console.error(`Failed to update Product ID ${productId}`);
                     }
+
+                    // 6. Checkout order (once per orderId)
+                    if (!checkedOutOrders.has(orderId)) {
+                        const checkoutRes = await fetch(
+                            `${API_BASE}/Order/checkoutOrder/${encodeURIComponent(orderId)}`,
+                            { method: "POST" }
+                        );
+
+                        if (!checkoutRes.ok) {
+                            console.error(`Failed to checkout Order ID ${orderId}`);
+                        } else {
+                            checkedOutOrders.add(orderId);
+                        }
+                    }
                 }
 
-                alert("All quantities subtracted from products successfully!");
-                loadProducts(); // refresh product table
+                alert("✔ Quantities subtracted and ✔ All related orders checked out!");
+                loadProducts();
+                loadOrderProducts();
+                loadOrders();
+
             } catch (err) {
                 console.error(err);
-                alert("Error processing quantity subtraction. Check console for details.");
+                alert("Error processing subtraction and checkout. Check console.");
             }
-
         }
+
+
+
+
+        // ====================== SIGNALR REAL-TIME UPDATES ======================
+        const signalRConnection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5264/notifications")
+            .withAutomaticReconnect()
+            .build();
+
+        signalRConnection.on("InventoryUpdated", payload => {
+            console.log("InventoryUpdated:", payload);
+            loadProducts(); // Refresh product list automatically
+        });
+
+        signalRConnection.on("OrderCheckedOut", payload => {
+            console.log("OrderCheckedOut:", payload);
+            loadOrders();
+            loadOrderProducts();
+        });
+
+        (async () => {
+            try {
+                await signalRConnection.start();
+                console.log("SignalR connected");
+            } catch (err) {
+                console.error("SignalR failed:", err);
+            }
+        })();
+
+
+
+
+
+
+
+        // ====================== INVENTORY WEBSOCKET UPDATES ======================
+        const invSocket = new WebSocket("ws://127.0.0.1:8080/inventory-socket");
+
+        invSocket.onopen = () => {
+            console.log("Connected to inventory socket");
+
+            // Example request (optional)
+            invSocket.send(JSON.stringify({
+                action: "getProduct",
+                productId: 4
+            }));
+        };
+
+        invSocket.onmessage = evt => {
+            const data = JSON.parse(evt.data);
+            console.log("Inventory socket message:", data);
+
+            // When inventory server sends an update, refresh UI
+            loadProducts();
+        };
+
+        invSocket.onerror = err => {
+            console.error("Inventory socket error:", err);
+        };
+
+        invSocket.onclose = () => {
+            console.warn("Inventory socket connection closed.");
+        };
 
     </script>
 </body>
