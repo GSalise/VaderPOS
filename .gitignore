@@ -38,3 +38,4 @@
 .vs/slnx.sqlite
 .vs/slnx.sqlite
 .vs/
+backend/inventory/application.properties

@@ -3,6 +3,7 @@ using SalesSystem.Interfaces;
 using SalesSystem.Models;
 using SalesSystem.DTOs;
 using AutoMapper;
+using SalesSystem.Services;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]
@@ -11,10 +12,13 @@ namespace SalesSystem.Controllers
     {
         private readonly IOrderRespository _orderRepository;
         private readonly IMapper _mapper;
-        public OrderController( IOrderRespository orderRepository, IMapper mapper)
+
+        private readonly SalesSocket _salesSocket;
+        public OrderController( IOrderRespository orderRepository, IMapper mapper, SalesSocket salesSocket)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _salesSocket = salesSocket;
         }
 
         [HttpGet("getAllOrders")]
