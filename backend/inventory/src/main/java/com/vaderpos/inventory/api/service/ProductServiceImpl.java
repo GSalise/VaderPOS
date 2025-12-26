@@ -5,26 +5,34 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.dto.ProductUpdateDTO;
 import com.vaderpos.inventory.api.repository.IProductRepository;
+import com.vaderpos.inventory.exception.InsufficientStockException;
+import com.vaderpos.inventory.exception.CategoryNotFoundException;
+import com.vaderpos.inventory.exception.ProductNotFoundException;
+import com.vaderpos.inventory.api.repository.ICategoryRepository;
+
 import java.util.List;
 import java.util.Optional;
 import java.math.BigDecimal;
 import com.vaderpos.inventory.api.model.Product;
-import com.vaderpos.inventory.socket.ProductChangeListener;
+import com.vaderpos.inventory.socket.ChangeListener;
 
 
 @Service
 public class ProductServiceImpl implements IProductService {
 
     private final IProductRepository productRepository;
+    private final ICategoryRepository categoryRepository;
 
-    public ProductServiceImpl(IProductRepository productRepository) {
+    public ProductServiceImpl(IProductRepository productRepository, ICategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
-    private ProductChangeListener changeListener;
+    private ChangeListener changeListener;
 
-    public void setChangeListener(ProductChangeListener listener){
+    public void setChangeListener(ChangeListener listener){
         this.changeListener = listener;
     }
 
@@ -75,25 +83,39 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+    public ProductDTO updateProduct(Long id, ProductUpdateDTO productUpdateDTO) {
         if (id == null) {
             throw new IllegalArgumentException("Product id cannot be null");
         }
-        if (productDTO == null) {
-            throw new IllegalArgumentException("ProductDTO cannot be null");
-        }
+        // add category check later
         Optional<Product> existingProductOpt = productRepository.findById(id);
         if (existingProductOpt.isPresent()) {
             Product existingProduct = existingProductOpt.get();
-            existingProduct.setProductName(productDTO.productName());
-            existingProduct.setQuantity(productDTO.quantity());
-            existingProduct.setPrice(BigDecimal.valueOf(productDTO.price()));
-            existingProduct.setCategoryId(productDTO.categoryId());
+
+            if (productUpdateDTO.productName() != null){
+                existingProduct.setProductName(productUpdateDTO.productName());
+            }
+
+            if (productUpdateDTO.quantity() != null){
+                existingProduct.setQuantity(productUpdateDTO.quantity());
+            }
+
+            if (productUpdateDTO.categoryId() != null){
+                if(categoryRepository.findById(productUpdateDTO.categoryId()).isEmpty()){
+                    throw new CategoryNotFoundException(productUpdateDTO.categoryId());
+                }
+                existingProduct.setCategoryId(productUpdateDTO.categoryId());
+            }
+
+            if (productUpdateDTO.price() != null){
+                existingProduct.setPrice(BigDecimal.valueOf(productUpdateDTO.price()));
+            }
+
             Product updatedProduct = productRepository.save(existingProduct);
             notifyChange(updatedProduct.getProductId());
             return convertToDTO(updatedProduct);
         } else {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(id);
         }
     }
 
@@ -115,7 +137,7 @@ public class ProductServiceImpl implements IProductService {
         if (productOpt.isPresent()) {
             return productOpt.get().getQuantity();
         } else {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(id);
         }
     }
 
@@ -132,10 +154,10 @@ public class ProductServiceImpl implements IProductService {
                 productRepository.save(product);
                 notifyChange(product.getProductId());
             } else {
-                throw new RuntimeException("Insufficient Stock");
+                throw new InsufficientStockException(id, quantity, product.getQuantity());
             }
         }else{
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(id);
         }
     }
 
@@ -150,7 +172,7 @@ public class ProductServiceImpl implements IProductService {
             productRepository.save(product);
             notifyChange(product.getProductId());
         } else {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundException(id);
         }
     }
 

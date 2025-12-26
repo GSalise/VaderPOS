@@ -8,16 +8,20 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.lang.NonNull;
 
 import com.vaderpos.inventory.api.service.IProductService;
+import com.vaderpos.inventory.api.service.ICategoryService;
 import com.vaderpos.inventory.api.service.ProductServiceImpl;
+import com.vaderpos.inventory.api.service.CategoryServiceImpl;
 
 @EnableWebSocket
-@Configuration
+@Configuration 
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final IProductService productService;
+    private final ICategoryService categoryService;
 
-    public WebSocketConfig(IProductService productService) {
+    public WebSocketConfig(IProductService productService, ICategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -29,10 +33,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Bean
     public SocketConnectionHandler socketConnectionHandler() {
-        SocketConnectionHandler handler = new SocketConnectionHandler(productService);
+        SocketConnectionHandler handler = new SocketConnectionHandler(productService, categoryService);
 
         if (productService instanceof ProductServiceImpl) {
             ((ProductServiceImpl) productService).setChangeListener(handler);
+        }
+
+        if (categoryService instanceof CategoryServiceImpl) {
+            ((CategoryServiceImpl) categoryService).setChangeListener(handler);
         }
 
         return handler;

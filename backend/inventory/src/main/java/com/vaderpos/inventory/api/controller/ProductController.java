@@ -1,7 +1,7 @@
 package com.vaderpos.inventory.api.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin; // <-- import this
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.dto.ProductUpdateDTO;
 import com.vaderpos.inventory.api.service.IProductService;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("api/products") 
-@CrossOrigin(origins = "http://localhost:5500") // <-- allow frontend calls
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
     private final IProductService productService;
 
@@ -44,8 +45,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productService.updateProduct(id, productDTO);
+    public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductUpdateDTO productUpdateDTO) {
+        return productService.updateProduct(id, productUpdateDTO);
     }
 
     @DeleteMapping("/{id}")
