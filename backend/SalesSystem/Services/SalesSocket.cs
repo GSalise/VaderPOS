@@ -415,5 +415,90 @@ namespace SalesSystem.Services
                 }
             }
         }
+
+        // Broadcast customer updates
+        public async Task BroadcastCustomerUpdateAsync(object customerData, string updateType = "single")
+        {
+            var message = new
+            {
+                type = "customerUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = updateType,
+                customer = customerData
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
+        // Broadcast order updates
+        public async Task BroadcastOrderUpdateAsync(object orderData, string updateType = "single")
+        {
+            var message = new
+            {
+                type = "orderUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = updateType,
+                order = orderData
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
+        // Broadcast order product updates
+        public async Task BroadcastOrderProductUpdateAsync(object orderProductData, string updateType = "single")
+        {
+            var message = new
+            {
+                type = "orderProductUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = updateType,
+                orderProduct = orderProductData
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
+        // Broadcast all customers (for global update)
+        public async Task BroadcastAllCustomersAsync(List<object> customers)
+        {
+            var message = new
+            {
+                type = "customerUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = "global",
+                customers = customers
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
+        // Broadcast all orders (for global update)
+        public async Task BroadcastAllOrdersAsync(List<object> orders)
+        {
+            var message = new
+            {
+                type = "orderUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = "global",
+                orders = orders
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
+        // Broadcast all order products (for global update)
+        public async Task BroadcastAllOrderProductsAsync(List<object> orderProducts)
+        {
+            var message = new
+            {
+                type = "orderProductUpdate",
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                updateType = "global",
+                orderProducts = orderProducts
+            };
+            string jsonMessage = JsonSerializer.Serialize(message);
+            await BroadcastToSalesClientsAsync(jsonMessage);
+        }
+
     }
 }

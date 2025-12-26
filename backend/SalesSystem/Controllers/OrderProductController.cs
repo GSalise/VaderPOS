@@ -40,12 +40,23 @@ namespace SalesSystem.Controllers
                 
                 var orderProduct = _mapper.Map<OrderProductDto> (await _orderProductRepository.AddProductToOrder(orderId, productId, unitprice));
                 await _salesSocket.SendMessageAsync(productId, 1, action: "takeProduct");
+                
+                // Broadcast order product update via WebSocket
+                await _salesSocket.BroadcastOrderProductUpdateAsync(orderProduct, "single");
+                
                 return Ok(orderProduct);
             }
             catch (InvalidOperationException ex)
             {
                 return NotFound(new { message = ex.Message });
             }
+        }
+        [HttpGet]
+        [Route("getCheckedoutOrderProducts")]
+        public async Task<ActionResult<IEnumerable<OrderProducts>>> GetCheckedoutOrderProducts()
+        {
+            var orderProducts =_mapper.Map<List<OrderProductDto>>(await _orderProductRepository.GetCheckedoutOrderProducts());
+            return Ok(orderProducts);
         }
     }
 }

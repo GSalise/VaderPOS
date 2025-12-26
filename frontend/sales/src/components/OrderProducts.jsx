@@ -1,6 +1,27 @@
 import { useMemo, useState, useEffect } from 'react'
 import { OrderProductApi, OrderApi, ProductApi, SalesApi, CustomerApi } from '../api.js'
-import { useWebSocket } from '../hooks/useWebSocket.js'
+import { useWebSocket, useWebSocketUpdates } from '../hooks/useWebSocket.js'
+
+// Normalize server/customer objects
+function normalizeCustomer(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const customerId = raw.customerId ?? raw.CustomerId ?? raw.id ?? raw.ID
+  const name = raw.name ?? raw.Name
+  const contact_No = raw.contact_No ?? raw.Contact_No ?? raw.contactNo ?? raw.ContactNo
+  return { customerId, name, contact_No }
+}
+
+// Normalize server/orderProduct objects
+function normalizeOrderProduct(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const orderId = raw.orderId ?? raw.OrderId
+  const productId = raw.productId ?? raw.ProductId
+  const quantity = raw.quantity ?? raw.Quantity ?? 0
+  const unitPriceAtOrder = raw.unitPriceAtOrder ?? raw.UnitPriceAtOrder ?? raw.unitPrice ?? raw.UnitPrice ?? 0
+  const totalPriceAtOrder = raw.totalPriceAtOrder ?? raw.TotalPriceAtOrder ?? unitPriceAtOrder * quantity
+  if (orderId == null || productId == null) return null
+  return { orderId, productId, quantity, unitPriceAtOrder, totalPriceAtOrder }
+}
 
 export default function OrderProducts() {
   const [orderProducts, setOrderProducts] = useState([])
@@ -22,7 +43,8 @@ export default function OrderProducts() {
   async function loadCustomers() {
     try {
       const data = await CustomerApi.list()
-      setCustomers(data || [])
+      const normalized = (Array.isArray(data) ? data : []).map(normalizeCustomer).filter(Boolean)
+      setCustomers(normalized)
     } catch (e) {
       console.error('Failed to load customers:', e)
     }
@@ -33,13 +55,34 @@ export default function OrderProducts() {
     try {
       const data = await OrderProductApi.list()
       console.log(data)
-      setOrderProducts(data || [])
+      const normalized = (Array.isArray(data) ? data : []).map(normalizeOrderProduct).filter(Boolean)
+      setOrderProducts(normalized)
     } catch (e) {
       alert(`Failed to load order products: ${e.message}`)
     } finally {
       setLoading(false)
     }
   }
+
+  // Listen to WebSocket order product updates
+  useWebSocketUpdates('orderProduct', (data) => {
+    if (data.updateType === 'single' && data.orderProduct) {
+      const updated = normalizeOrderProduct(data.orderProduct)
+      if (!updated) return
+      setOrderProducts(prev => {
+        const key = `${updated.orderId}-${updated.productId}`
+        const index = prev.findIndex(op => `${op.orderId}-${op.productId}` === key)
+        if (index >= 0) {
+          return prev.map((op, i) => i === index ? updated : op)
+        } else {
+          return [...prev, updated]
+        }
+      })
+    } else if (data.updateType === 'global' && data.orderProducts) {
+      const normalized = data.orderProducts.map(normalizeOrderProduct).filter(Boolean)
+      setOrderProducts(normalized)
+    }
+  })
 
   async function addOrderProduct() {
     const oid = parseInt(orderId, 10)
@@ -52,7 +95,6 @@ export default function OrderProducts() {
       await OrderProductApi.addToOrder({ orderId: oid, productId: pid, quantity: 1 })
       setOrderId('')
       setProductId('')
-      await loadOrderProducts()
       alert('Added!')
     } catch (e) {
       alert(`Failed to add product to order: ${e.message}`)
@@ -60,36 +102,36 @@ export default function OrderProducts() {
   }
 
   async function subtractOrderProductQuantity() {
-    try {
-      const ops = await OrderProductApi.list()
-      const checkedOut = new Set()
+    // try {
+    //   const ops = await OrderProductApi.list()
+    //   const normalizedOps = (Array.isArray(ops) ? ops : []).map(normalizeOrderProduct).filter(Boolean)
+    //   const checkedOut = new Set()
 
-      for (const op of ops) {
-        // Find product from WebSocket cache instead of API call
-        const product = productsCache.find(p => p.productId === op.productId)
-        if (!product) continue
+    //   for (const op of normalizedOps) {
+    //     // Find product from WebSocket cache instead of API call
+    //     const product = productsCache.find(p => p.productId === op.productId)
+    //     if (!product) continue
 
-        const newQuantity = Math.max(0, (product.quantity ?? 0) - (op.quantity ?? 0))
-        const updatedProduct = { ...product, quantity: newQuantity }
-        // Still use API to update product, but get initial data from WebSocket
-        await ProductApi.update(op.productId, updatedProduct).catch(err => {
-          console.error('Update failed', err)
-        })
+    //     const newQuantity = Math.max(0, (product.quantity ?? 0) - (op.quantity ?? 0))
+    //     const updatedProduct = { ...product, quantity: newQuantity }
+    //     // Still use API to update product, but get initial data from WebSocket
+    //     await ProductApi.update(op.productId, updatedProduct).catch(err => {
+    //       console.error('Update failed', err)
+    //     })
 
-        if (!checkedOut.has(op.orderId)) {
-          await OrderApi.checkout(op.orderId).catch(err => {
-            console.error('Checkout failed', err)
-          })
-          checkedOut.add(op.orderId)
-        }
-      }
+    //     if (!checkedOut.has(op.orderId)) {
+    //       await OrderApi.checkout(op.orderId).catch(err => {
+    //         console.error('Checkout failed', err)
+    //       })
+    //       checkedOut.add(op.orderId)
+    //     }
+    //   }
 
-      alert('✔ Quantities subtracted and ✔ related orders checked out!')
-      await loadOrderProducts()
-    } catch (e) {
-      console.error(e)
-      alert('Error processing subtraction and checkout.')
-    }
+    //   alert('✔ Quantities subtracted and ✔ related orders checked out!')
+    // } catch (e) {
+    //   console.error(e)
+    //   alert('Error processing subtraction and checkout.')
+    // }
   }
 
   function addProductToSale() {
@@ -112,7 +154,6 @@ export default function OrderProducts() {
       return
     }
 
-    // Check if product already in sale, update quantity if so
     const existingIndex = saleProducts.findIndex(p => p.productId === pid)
     if (existingIndex >= 0) {
       const newQty = saleProducts[existingIndex].quantity + qty
@@ -166,13 +207,11 @@ export default function OrderProducts() {
       const result = await SalesApi.createSale(payload)
       alert(`Sale created successfully! Order ID: ${result.orderId}`)
       
-      // Reset form
       setSelectedCustomerId('')
       setSaleProducts([])
       setSelectedProductId('')
       setSelectedQuantity('1')
       
-      // Reload orders and order products
       await loadOrderProducts()
     } catch (e) {
       const errorMessage = e.message || 'Failed to create sale'
@@ -191,9 +230,10 @@ export default function OrderProducts() {
     return orderProducts.reduce((sum, op) => sum + (priceById.get(op.productId) || 0) * (op.quantity || 0), 0)
   }, [orderProducts, productsCache])
 
-  // Load customers on mount
+  // Load customers and order products on mount
   useEffect(() => {
     loadCustomers()
+    loadOrderProducts()
   }, [])
 
   return (
@@ -336,20 +376,15 @@ export default function OrderProducts() {
           </tr>
         </thead>
         <tbody>
-          {orderProducts.map(op => {
-            const product = productsCache.find(p => p.productId === op.productId)
-            const price = product?.price ?? 0
-            const subtotal = price * (op.quantity ?? 0)
-            return (
-              <tr key={`${op.orderId}-${op.productId}`}>
-                <td>{op.orderId}</td>
-                <td>{op.productId}</td>
-                <td>{op.quantity}</td>
-                <td>₱{op.unitPriceAtOrder.toFixed(2)}</td>
-                <td>₱{op.totalPriceAtOrder.toFixed(2)}</td>
-              </tr>
-            )
-          })}
+          {orderProducts.map(op => (
+            <tr key={`${op.orderId}-${op.productId}`}>
+              <td>{op.orderId}</td>
+              <td>{op.productId}</td>
+              <td>{op.quantity}</td>
+              <td>₱{Number(op.unitPriceAtOrder ?? 0).toFixed(2)}</td>
+              <td>₱{Number(op.totalPriceAtOrder ?? (op.unitPriceAtOrder ?? 0) * (op.quantity ?? 0)).toFixed(2)}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
 

@@ -1,5 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CustomerApi } from '../api.js'
+import { useWebSocketUpdates } from '../hooks/useWebSocket.js'
+
+// Normalize server/customer objects to a consistent shape used by the UI
+function normalizeCustomer(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const customerId = raw.customerId ?? raw.CustomerId ?? raw.id ?? raw.ID
+  const name = raw.name ?? raw.Name
+  const contact_No = raw.contact_No ?? raw.Contact_No ?? raw.contactNo ?? raw.ContactNo
+  return { customerId, name, contact_No }
+}
 
 export default function Customers() {
   const [customers, setCustomers] = useState([])
@@ -11,7 +21,9 @@ export default function Customers() {
     setLoading(true)
     try {
       const data = await CustomerApi.list()
-      setCustomers(data)
+      // normalize list results
+      const normalized = (Array.isArray(data) ? data : []).map(normalizeCustomer).filter(Boolean)
+      setCustomers(normalized)
     } catch (e) {
       alert(`Failed to load customers: ${e.message}`)
     } finally {
@@ -19,16 +31,41 @@ export default function Customers() {
     }
   }
 
+  // Listen to WebSocket customer updates
+  useWebSocketUpdates('customer', (data) => {
+    if (data.updateType === 'single' && data.customer) {
+      const updated = normalizeCustomer(data.customer)
+      if (!updated || updated.customerId == null) return
+      setCustomers(prev => {
+        const index = prev.findIndex(c => c.customerId === updated.customerId)
+        if (index >= 0) {
+          return prev.map((c, i) => (i === index ? updated : c))
+        } else {
+          return [...prev, updated]
+        }
+      })
+    } else if (data.updateType === 'global' && data.customers) {
+      const normalized = data.customers.map(normalizeCustomer).filter(Boolean)
+      setCustomers(normalized)
+    }
+  })
+
+  // Load customers on mount
+  useEffect(() => {
+    loadCustomers()
+  }, [])
+
   async function addCustomer() {
     if (!name.trim() || !contact.trim()) {
       alert('Missing fields.')
       return
     }
     try {
-      await CustomerApi.add({ name: name.trim(), contact_No: contact.trim() })
+      // Send fields in the case the backend uses
+      await CustomerApi.add({ Name: name.trim(), Contact_No: contact.trim() })
       setName('')
       setContact('')
-      await loadCustomers()
+      // WebSocket should push the new customer; no manual reload needed
       alert('Added!')
     } catch (e) {
       alert(`Failed to add customer: ${e.message}`)
@@ -55,8 +92,8 @@ export default function Customers() {
           <tr><th>ID</th><th>Name</th><th>Contact</th></tr>
         </thead>
         <tbody>
-          {customers.map(c => (
-            <tr key={c.customerId}>
+          {customers.map((c, idx) => (
+            <tr key={c.customerId ?? `row-${idx}`}>
               <td>{c.customerId}</td>
               <td>{c.name}</td>
               <td>{c.contact_No}</td>
