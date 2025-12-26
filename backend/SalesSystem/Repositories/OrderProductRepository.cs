@@ -112,6 +112,14 @@ namespace SalesSystem.Repositories
             return orderProduct;
         }
 
+
+        public async Task<IEnumerable<OrderProducts>> GetCheckedoutOrderProducts()
+        {
+            return await _context.orderProducts
+                .Include(op => op.Order)
+                .Where(op => op.Order.isCheckedOut)
+                .ToListAsync();
+        }
          
     }
 }

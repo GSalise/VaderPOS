@@ -1,5 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { OrderApi } from '../api.js'
+import { useWebSocketUpdates } from '../hooks/useWebSocket.js'
+
+// Normalize server/order objects to a consistent shape used by the UI
+function normalizeOrder(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const orderId = raw.orderId ?? raw.OrderId ?? raw.id ?? raw.ID
+  const customerId = raw.customerId ?? raw.CustomerId
+  const orderDate = raw.orderDate ?? raw.OrderDate
+  const isCheckedOut = raw.isCheckedOut ?? raw.IsCheckedOut ?? false
+  const deleted = raw.deleted ?? raw.Deleted ?? false
+  return { orderId, customerId, orderDate, isCheckedOut, deleted }
+}
 
 export default function Orders() {
   const [orders, setOrders] = useState([])
@@ -13,13 +25,52 @@ export default function Orders() {
     try {
       const data = await OrderApi.list()
       console.log(data)
-      setOrders((data || []).filter(o => !o.isCheckedOut))
+      const normalized = (Array.isArray(data) ? data : [])
+        .map(normalizeOrder)
+        .filter(Boolean)
+        .filter(o => !o.isCheckedOut)
+      setOrders(normalized)
     } catch (e) {
       alert(`Failed to load orders: ${e.message}`)
     } finally {
       setLoading(false)
     }
   }
+
+  // Listen to WebSocket order updates
+  useWebSocketUpdates('order', (data) => {
+    if (data.updateType === 'single' && data.order) {
+      const updated = normalizeOrder(data.order)
+      if (!updated || updated.orderId == null) return
+      if (updated.deleted) {
+        setOrders(prev => prev.filter(o => o.orderId !== updated.orderId))
+      } else {
+        setOrders(prev => {
+          const index = prev.findIndex(o => o.orderId === updated.orderId)
+          if (index >= 0) {
+            // Update existing order (only if not checked out)
+            return updated.isCheckedOut
+              ? prev.filter((o, i) => i !== index)
+              : prev.map((o, i) => (i === index ? updated : o))
+          } else {
+            // Add new order (only if not checked out)
+            return updated.isCheckedOut ? prev : [...prev, updated]
+          }
+        })
+      }
+    } else if (data.updateType === 'global' && data.orders) {
+      const normalized = data.orders
+        .map(normalizeOrder)
+        .filter(Boolean)
+        .filter(o => !o.isCheckedOut)
+      setOrders(normalized)
+    }
+  })
+
+  // Load orders on mount
+  useEffect(() => {
+    loadOrders()
+  }, [])
 
   async function addOrder() {
     const cid = parseInt(customerId, 10)
@@ -28,10 +79,10 @@ export default function Orders() {
       return
     }
     try {
-      await OrderApi.add({ customerId: cid, orderDate })
+      // Send fields in the case the backend uses
+      await OrderApi.add({ CustomerId: cid, OrderDate: orderDate })
       setCustomerId('')
       setOrderDate('')
-      await loadOrders()
       alert('Order added!')
     } catch (e) {
       alert(`Failed to add order: ${e.message}`)
@@ -46,12 +97,21 @@ export default function Orders() {
     try {
       await OrderApi.delete(deleteId.trim())
       setDeleteId('')
-      await loadOrders()
       alert('Deleted!')
     } catch (e) {
       alert(`Failed to delete order: ${e.message}`)
     }
   }
+
+
+  async function checkoutOrder(orderId) {
+    try {
+      await OrderApi.checkout(orderId)
+      alert('Order checked out!')
+    } catch (e) {
+      alert(`Failed to checkout order: ${e.message}`)
+    }
+  } 
 
   return (
     <div>
@@ -76,7 +136,7 @@ export default function Orders() {
 
       <table className="table">
         <thead>
-          <tr><th>ID</th><th>Customer</th><th>Date</th></tr>
+          <tr><th>ID</th><th>Customer</th><th>Date</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {orders.map(o => (
@@ -84,6 +144,7 @@ export default function Orders() {
               <td>{o.orderId}</td>
               <td>{o.customerId}</td>
               <td>{new Date(o.orderDate).toLocaleDateString()}</td>
+              <td style={{ textAlign: 'center' }}><button onClick={() => checkoutOrder(o.orderId)}> Checkout</button></td>
             </tr>
           ))}
         </tbody>

@@ -33,6 +33,7 @@ export const OrderApi = {
 
 export const OrderProductApi = {
   list: () => request(`${API_BASE}/OrderProduct/getAllOrderProduct`),
+  listCheckedout: () => request(`${API_BASE}/OrderProduct/getCheckedOutOrderProducts`),
   addToOrder: ({ orderId, productId, quantity = 1 }) => request(`${API_BASE}/OrderProduct/addProductToOrder?orderId=${orderId}&productId=${productId}&quantity=${quantity}`, { method: 'POST' })
 }
 

@@ -49,7 +49,12 @@ namespace SalesSystem.Controllers
                 return BadRequest();
             var orderEntity = _mapper.Map<Order>(order);
             var createdOrder =  await _orderRepository.AddOrderAsync(orderEntity);
-            return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderId }, createdOrder);
+            var createdOrderDto = _mapper.Map<OrderDto>(createdOrder);
+            
+            // Broadcast order update via WebSocket
+            await _salesSocket.BroadcastOrderUpdateAsync(createdOrderDto, "single");
+            
+            return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderId }, createdOrderDto);
         }
 
         [HttpPut]
@@ -66,6 +71,10 @@ namespace SalesSystem.Controllers
                 return NotFound();
 
             var updatedOrderDto = _mapper.Map<OrderDto>(updatedOrder);
+            
+            // Broadcast order update via WebSocket
+            await _salesSocket.BroadcastOrderUpdateAsync(updatedOrderDto, "single");
+            
             return Ok(updatedOrderDto);
         }
 
@@ -87,6 +96,10 @@ namespace SalesSystem.Controllers
                 }
 
                 var dto = _mapper.Map<OrderDto>(updatedOrder);
+                
+                // Broadcast order update via WebSocket
+                await _salesSocket.BroadcastOrderUpdateAsync(dto, "single");
+                
                 return Ok(dto);
             }
             catch (InvalidOperationException ex)
@@ -105,6 +118,10 @@ namespace SalesSystem.Controllers
             {
                 return NotFound();
             }
+            
+            // Broadcast order deletion via WebSocket
+            await _salesSocket.BroadcastOrderUpdateAsync(new { orderId = id, deleted = true }, "single");
+            
             return NoContent();
         }
     }

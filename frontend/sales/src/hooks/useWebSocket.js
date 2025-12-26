@@ -15,6 +15,12 @@ class WebSocketManager {
     this.reconnectAttempts = 0
     this.isConnecting = false
     this.connectionId = 0 // Track connection attempts to prevent premature closes
+    this.updateCallbacks = {
+      customer: new Set(),
+      order: new Set(),
+      orderProduct: new Set(),
+      product: new Set()
+    }
   }
 
   subscribe(listener) {
@@ -36,10 +42,33 @@ class WebSocketManager {
     }
   }
 
+  // Subscribe to specific update types
+  onUpdate(type, callback) {
+    if (this.updateCallbacks[type]) {
+      this.updateCallbacks[type].add(callback)
+      return () => {
+        this.updateCallbacks[type].delete(callback)
+      }
+    }
+    return () => {}
+  }
+
   notifyListeners() {
     this.listeners.forEach(listener => {
       listener({ products: this.products, isConnected: this.isConnected })
     })
+  }
+
+  notifyUpdateCallbacks(type, data) {
+    if (this.updateCallbacks[type]) {
+      this.updateCallbacks[type].forEach(callback => {
+        try {
+          callback(data)
+        } catch (error) {
+          console.error(`Error in ${type} update callback:`, error)
+        }
+      })
+    }
   }
 
   connect() {
@@ -98,11 +127,13 @@ class WebSocketManager {
           const data = JSON.parse(event.data)
           console.log('WebSocket message received:', data)
 
+          // Handle product updates
           if (data.type === 'productUpdate') {
             if (data.updateType === 'global' && data.products) {
               // Replace all products with the new list
               this.products = data.products
               this.notifyListeners()
+              this.notifyUpdateCallbacks('product', { updateType: 'global', products: data.products })
             } else if (data.updateType === 'single' && data.updatedProduct) {
               // Update only the specific product
               const index = this.products.findIndex(p => p.productId === data.updatedProduct.productId)
@@ -116,6 +147,7 @@ class WebSocketManager {
               }
               
               this.notifyListeners()
+              this.notifyUpdateCallbacks('product', { updateType: 'single', product: data.updatedProduct })
             }
           } else if (data.status === 'success' && data.productId && data.remainingStock !== undefined) {
             // Handle stock reduction confirmation - update the product quantity
@@ -124,7 +156,20 @@ class WebSocketManager {
             if (index >= 0) {
               this.products[index] = { ...this.products[index], quantity: data.remainingStock }
               this.notifyListeners()
+              this.notifyUpdateCallbacks('product', { updateType: 'single', product: { productId: data.productId, quantity: data.remainingStock } })
             }
+          }
+          // Handle customer updates
+          else if (data.type === 'customerUpdate') {
+            this.notifyUpdateCallbacks('customer', data)
+          }
+          // Handle order updates
+          else if (data.type === 'orderUpdate') {
+            this.notifyUpdateCallbacks('order', data)
+          }
+          // Handle order product updates
+          else if (data.type === 'orderProductUpdate') {
+            this.notifyUpdateCallbacks('orderProduct', data)
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error)
@@ -229,6 +274,7 @@ class WebSocketManager {
 // Create singleton instance
 const wsManager = new WebSocketManager()
 
+// Hook for products (existing functionality)
 export function useWebSocket(onMessage) {
   const [state, setState] = useState({ products: [], isConnected: false })
   const listenerRef = useRef(null)
@@ -260,4 +306,14 @@ export function useWebSocket(onMessage) {
     isConnected: state.isConnected, 
     reconnect 
   }
+}
+
+// Hook for listening to specific update types
+export function useWebSocketUpdates(type, callback) {
+  useEffect(() => {
+    if (!type || !callback) return
+    
+    const unsubscribe = wsManager.onUpdate(type, callback)
+    return unsubscribe
+  }, [type, callback])
 }

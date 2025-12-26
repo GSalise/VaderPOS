@@ -74,6 +74,7 @@ namespace SalesSystem.Services
                 await _context.SaveChangesAsync();
 
                 // Add all products to the order (we already validated availability)
+                var orderProductDtos = new List<OrderProductDto>();
                 foreach (var product in products)
                 {
                     var newOrderProduct = await _orderProductRepository.AddProductToOrder(
@@ -88,8 +89,14 @@ namespace SalesSystem.Services
                         throw new InvalidOperationException($"Failed to add Product with ID {product.ProductId} to order.");
                     }
                     
+                    var orderProductDto = _mapper.Map<OrderProductDto>(newOrderProduct);
+                    orderProductDtos.Add(orderProductDto);
+                    
                     // Send WebSocket message to inventory to reduce stock
                     await _salesSocket.SendMessageAsync(product.ProductId, product.Quantity, action: "takeProduct");
+                    
+                    // Broadcast order product update via WebSocket
+                    await _salesSocket.BroadcastOrderProductUpdateAsync(orderProductDto, "single");
                 }
 
                 await _context.SaveChangesAsync();
@@ -97,7 +104,12 @@ namespace SalesSystem.Services
 
                 // Get the complete order with all products
                 var completeOrder = await _orderRepository.GetOrderByIdAsync(neworder.OrderId);
-                return _mapper.Map<OrderDto>(completeOrder);
+                var orderDto = _mapper.Map<OrderDto>(completeOrder);
+                
+                // Broadcast order update via WebSocket
+                await _salesSocket.BroadcastOrderUpdateAsync(orderDto, "single");
+                
+                return orderDto;
             }
             catch (InvalidOperationException)
             {

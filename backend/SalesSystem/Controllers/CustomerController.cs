@@ -3,6 +3,7 @@ using SalesSystem.Interfaces;
 using SalesSystem.Models;
 using AutoMapper;
 using SalesSystem.DTOs;
+using SalesSystem.Services;
 namespace SalesSystem.Controllers
 {
     [Route("api/[controller]")]
@@ -12,10 +13,12 @@ namespace SalesSystem.Controllers
 
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
-        public CustomerController( ICustomerRepository customerRepository, IMapper mapper)
+        private readonly SalesSocket _salesSocket;
+        public CustomerController( ICustomerRepository customerRepository, IMapper mapper, SalesSocket salesSocket)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
+            _salesSocket = salesSocket;
         }
 
         [HttpGet]
@@ -45,7 +48,12 @@ namespace SalesSystem.Controllers
             }
             var customerEntity = _mapper.Map<Customer>(customer);
             var createdCustomer = await _customerRepository.AddCustomerAsync(customerEntity);
-            return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.CustomerId }, createdCustomer);
+            var createdCustomerDto = _mapper.Map<CustomerDto>(createdCustomer);
+            
+            // Broadcast customer update via WebSocket
+            await _salesSocket.BroadcastCustomerUpdateAsync(createdCustomerDto, "single");
+            
+            return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.CustomerId }, createdCustomerDto);
         }
 
         //[HttpPut("updateCustomer/{id}")]

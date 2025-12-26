@@ -6,5 +6,6 @@ namespace SalesSystem.Interfaces
         Task<IEnumerable<OrderProducts>> GetAllOrderProductsAsync();
         Task<OrderProducts> AddProductToOrder(int orderID,int productID, decimal unitprice, int quantity = 1);
 
+        Task<IEnumerable<OrderProducts>> GetCheckedoutOrderProducts();
     }
 }
