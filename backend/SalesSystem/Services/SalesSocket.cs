@@ -53,6 +53,8 @@ namespace SalesSystem.Services
     public class SalesSocket
     {
         private string? _lastInventoryMessage;
+
+        private string? _initialInventoryMessage;
         private readonly string _address = "127.0.0.1";
         private readonly int _Salesport = 5265;
         private readonly int _Inventoryport = 8080;
@@ -96,6 +98,16 @@ namespace SalesSystem.Services
                     {
                         await clientSocket.SendAsync(
                             new ArraySegment<byte>(Encoding.UTF8.GetBytes(_lastInventoryMessage)),
+                            WebSocketMessageType.Text,
+                            true,
+                            CancellationToken.None
+                        );
+                    }
+
+                    if (_initialInventoryMessage != null)
+                    {
+                        await clientSocket.SendAsync(
+                            new ArraySegment<byte>(Encoding.UTF8.GetBytes(_initialInventoryMessage)),
                             WebSocketMessageType.Text,
                             true,
                             CancellationToken.None
@@ -151,14 +163,23 @@ namespace SalesSystem.Services
                             }
 
                             string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
                             _lastInventoryMessage = message;
+
+                            if(_initialInventoryMessage == null)
+                            {
+                                _initialInventoryMessage = message;
+                            }
                             Console.WriteLine("Response from Inventory: " + message);
                             
+
                             // Parse and process the message
                             ProcessInventoryMessage(message);
-                            
+
                             // Broadcast to sales clients
                             await BroadcastToSalesClientsAsync(message);
+                            
+
                         }
                         catch (Exception ex)
                         {
