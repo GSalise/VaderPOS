@@ -12,6 +12,7 @@ export default function Orders() {
     setLoading(true)
     try {
       const data = await OrderApi.list()
+      console.log(data)
       setOrders((data || []).filter(o => !o.isCheckedOut))
     } catch (e) {
       alert(`Failed to load orders: ${e.message}`)
