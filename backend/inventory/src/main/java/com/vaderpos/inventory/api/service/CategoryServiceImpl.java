@@ -9,11 +9,26 @@ import java.util.stream.Collectors;
 import com.vaderpos.inventory.api.model.ProductCategory;
 import com.vaderpos.inventory.api.dto.CategoryDTO;
 import com.vaderpos.inventory.api.repository.ICategoryRepository;
+import com.vaderpos.inventory.exception.CategoryNotFoundException;
+import com.vaderpos.inventory.socket.ChangeListener;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService{
     
     private final ICategoryRepository categoryRepository;
+
+    private ChangeListener changeListener;
+
+    public void setChangeListener(ChangeListener listener){
+        this.changeListener = listener;
+    }
+
+
+    private void notifyChange(Integer categoryId) {
+        if (changeListener != null) {
+            changeListener.onCategoryChanged(categoryId);
+        }
+    }
 
     public CategoryServiceImpl(ICategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -45,6 +60,7 @@ public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         throw new RuntimeException("ProductCategory conversion returned null");
     }
     ProductCategory savedCategory = categoryRepository.save(category);
+    notifyChange(savedCategory.getCategoryId());
     return convertToDTO(savedCategory);
 }
 
@@ -61,9 +77,10 @@ public CategoryDTO createCategory(CategoryDTO categoryDTO) {
             ProductCategory existingCategory = existingCategoryOpt.get();
             existingCategory.setCategoryName(categoryDTO.categoryName());
             ProductCategory updatedCategory = categoryRepository.save(existingCategory);
+            notifyChange(updatedCategory.getCategoryId());
             return convertToDTO(updatedCategory);
         } else {
-            throw new RuntimeException("Category not found with id: " + id);
+            throw new CategoryNotFoundException(id);
         }
     }
 
@@ -73,6 +90,7 @@ public CategoryDTO createCategory(CategoryDTO categoryDTO) {
             throw new IllegalArgumentException("Category id cannot be null");
         }
         categoryRepository.deleteById(id);
+        notifyChange(id);
     }
 
     private CategoryDTO convertToDTO(ProductCategory productCategory) {

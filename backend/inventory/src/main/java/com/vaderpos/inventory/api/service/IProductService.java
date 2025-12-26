@@ -3,12 +3,13 @@ package com.vaderpos.inventory.api.service;
 import java.util.List;
 import java.util.Optional;
 import com.vaderpos.inventory.api.dto.ProductDTO;
+import com.vaderpos.inventory.api.dto.ProductUpdateDTO;
 
 public interface IProductService {
     List<ProductDTO> getAllProducts();
     Optional<ProductDTO> getProduct(Long id);
     ProductDTO createProduct(ProductDTO productDTO);
-    ProductDTO updateProduct(Long id, ProductDTO productDTO);
+    ProductDTO updateProduct(Long id, ProductUpdateDTO productUpdateDTO);
     void deleteProduct(Long id);
 
     int checkProductStock(Long id);

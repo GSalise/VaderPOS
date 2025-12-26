@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("api/categories")
-@CrossOrigin(origins = "http://localhost:5500") // <-- allow frontend calls
+@CrossOrigin(origins = "http://localhost:5173") 
 public class CategoryController {
     private final ICategoryService categoryService;
 
