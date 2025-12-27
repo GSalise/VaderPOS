@@ -1,33 +1,37 @@
 import React, { useState } from "react";
-import { useProductWebSocket } from "../hooks/useProductWebSocket";
 import { useProductApi } from "../hooks/useProductApi";
 
 interface Product {
   productId?: number;
-  name?: string;
+  productName?: string;
   quantity?: number;
   categoryId?: number;
   price?: number;
 }
 
+interface WsState {
+  products: Product[];
+  categories: unknown[]; // not gonna use this here
+  isConnected: boolean;
+  error: string | null;
+}
+
 const nameRegex = /^[A-Za-z ]*$/;
 const numberRegex = /^[0-9]*$/;
 
-export const Products: React.FC = () => {
-  const { products, isConnected, error } = useProductWebSocket(
-    "ws://localhost:8080/inventory-socket"
-  );
+export const Products: React.FC<{ wsState: WsState }> = ({ wsState }) => {
+  const { products, isConnected, error } = wsState;
   const { sendRequest } = useProductApi();
   const [addProductItem, setAddProductItem] = useState<Product>({
     productId: undefined,
-    name: undefined,
+    productName: undefined,
     quantity: undefined,
     categoryId: undefined,
     price: undefined,
   });
   const [modifyProductItem, setModifyProductItem] = useState<Product>({
     productId: undefined,
-    name: undefined,
+    productName: undefined,
     quantity: undefined,
     categoryId: undefined,
     price: undefined,
@@ -45,7 +49,7 @@ export const Products: React.FC = () => {
     switch (actionType) {
       case "add":
         setAddProductItem({
-          name: "",
+          productName: "",
           quantity: 0,
           categoryId: 0,
           price: 0,
@@ -54,7 +58,7 @@ export const Products: React.FC = () => {
       case "modify":
         setModifyProductItem({
           productId: 0,
-          name: "",
+          productName: "",
           quantity: 0,
           categoryId: 0,
           price: 0,
@@ -89,7 +93,13 @@ export const Products: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-4 ">
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Add New Product</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("add", addProductItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Product Name:
@@ -97,13 +107,15 @@ export const Products: React.FC = () => {
               <input
                 type="text"
                 required
+                pattern="[A-Za-z ]+"
+                title="Only letters and spaces are allowed"
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addProductItem.name}
+                value={addProductItem.productName}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (nameRegex.test(value)) {
-                    setAddProductItem({ ...addProductItem, name: value });
-                  }
+                  setAddProductItem({
+                    ...addProductItem,
+                    productName: e.target.value,
+                  });
                 }}
               />
             </div>
@@ -113,16 +125,17 @@ export const Products: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addProductItem.quantity}
+                value={addProductItem.quantity ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setAddProductItem({
-                      ...addProductItem,
-                      quantity: Number(value),
-                    });
-                  }
+                  setAddProductItem({
+                    ...addProductItem,
+                    quantity:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -134,16 +147,17 @@ export const Products: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addProductItem.categoryId}
+                value={addProductItem.categoryId ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setAddProductItem({
-                      ...addProductItem,
-                      categoryId: Number(value),
-                    });
-                  }
+                  setAddProductItem({
+                    ...addProductItem,
+                    categoryId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -153,36 +167,38 @@ export const Products: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addProductItem.price}
+                value={addProductItem.price ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setAddProductItem({
-                      ...addProductItem,
-                      price: Number(value),
-                    });
-                  }
+                  setAddProductItem({
+                    ...addProductItem,
+                    price:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
             <button
               className="!bg-[#0052FF] text-white p-2 rounded-md w-full  disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={
-                !addProductItem.name ||
-                !addProductItem.quantity ||
-                !addProductItem.categoryId ||
-                !addProductItem.price
-              }
-              onClick={() => handleOnClick("add", addProductItem)}
+              type="submit"
             >
               Add Product
             </button>
-          </div>
+          </form>
         </div>
+
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Modify Existing Product</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("modify", modifyProductItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Product ID:
@@ -190,16 +206,17 @@ export const Products: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyProductItem.productId}
+                value={modifyProductItem.productId ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setModifyProductItem({
-                      ...modifyProductItem,
-                      productId: Number(value),
-                    });
-                  }
+                  setModifyProductItem({
+                    ...modifyProductItem,
+                    productId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -210,12 +227,12 @@ export const Products: React.FC = () => {
               <input
                 type="text"
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyProductItem.name}
+                value={modifyProductItem.productName}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (nameRegex.test(value)) {
-                    setModifyProductItem({ ...modifyProductItem, name: value });
-                  }
+                  setModifyProductItem({
+                    ...modifyProductItem,
+                    productName: e.target.value,
+                  });
                 }}
               />
             </div>
@@ -224,16 +241,17 @@ export const Products: React.FC = () => {
               <label className="text-white whitespace-nowrap">Quantity:</label>
               <input
                 type="number"
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyProductItem.quantity}
+                value={modifyProductItem.quantity ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setModifyProductItem({
-                      ...modifyProductItem,
-                      quantity: Number(value),
-                    });
-                  }
+                  setModifyProductItem({
+                    ...modifyProductItem,
+                    quantity:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -244,16 +262,17 @@ export const Products: React.FC = () => {
               </label>
               <input
                 type="number"
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyProductItem.categoryId}
+                value={modifyProductItem.categoryId ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setModifyProductItem({
-                      ...modifyProductItem,
-                      categoryId: Number(value),
-                    });
-                  }
+                  setModifyProductItem({
+                    ...modifyProductItem,
+                    categoryId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -262,31 +281,37 @@ export const Products: React.FC = () => {
               <label className="text-white whitespace-nowrap">Price:</label>
               <input
                 type="number"
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
                 value={modifyProductItem.price}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setModifyProductItem({
-                      ...modifyProductItem,
-                      price: Number(value),
-                    });
-                  }
+                  setModifyProductItem({
+                    ...modifyProductItem,
+                    price:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
             <button
               className="!bg-[#0052FF] text-white p-2 rounded-md w-full  disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={!modifyProductItem.productId}
-              onClick={() => handleOnClick("modify", modifyProductItem)}
+              type="submit"
             >
               Modify Product
             </button>
-          </div>
+          </form>
         </div>
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Delete Product</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("delete", deleteProductItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Product ID:
@@ -294,28 +319,28 @@ export const Products: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
                 value={deleteProductItem.productId}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setDeleteProductItem({
-                      ...deleteProductItem,
-                      productId: Number(value),
-                    });
-                  }
+                  setDeleteProductItem({
+                    ...deleteProductItem,
+                    productId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
             <button
               className="!bg-[#DC1C13] text-white p-2 rounded-md w-full 
              disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={!deleteProductItem.productId}
-              onClick={() => handleOnClick("delete", deleteProductItem)}
+              type="submit"
             >
               Delete Product
             </button>
-          </div>
+          </form>
         </div>
       </div>
       <div className="border-2 p-4">
@@ -359,7 +384,7 @@ export const Products: React.FC = () => {
                     {product.categoryId}
                   </td>
                   <td className="border-b border-gray-600 p-2 text-white">
-                    ${product.price.toFixed(2)}
+                    ₱{product.price?.toFixed(2) ?? "0.00"}
                   </td>
                 </tr>
               ))
