@@ -3,7 +3,7 @@ import { useState } from "react";
 
 interface Category {
   categoryId?: number;
-  name?: string;
+  categoryName?: string;
 }
 
 export const useCategoryApi = () => {
@@ -16,12 +16,12 @@ export const useCategoryApi = () => {
         case "add":
           await axios.post(`${BASE_URL}`, {
             categoryId: category.categoryId,
-            categoryName: category.name,
+            categoryName: category.categoryName,
           });
           break;
         case "modify":
           await axios.put(`${BASE_URL}/${category.categoryId}`, {
-            categoryName: category.name,
+            categoryName: category.categoryName,
           });
           break;
 

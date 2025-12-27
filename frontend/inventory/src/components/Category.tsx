@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import { useCategoryApi } from "../hooks/useCategoryApi";
-import { useCategoryWebSocket } from "../hooks/useCategoryWebSocket";
 
 interface Category {
   categoryId?: number;
-  name?: string;
+  categoryName?: string;
 }
 
-const nameRegex = /^[A-Za-z ]*$/;
-const numberRegex = /^[0-9]*$/;
+interface WsState {
+  products: unknown[]; // not gonna use this here
+  categories: Category[];
+  isConnected: boolean;
+  error: string | null;
+}
 
-export const Category: React.FC = () => {
-  const { categories, isConnected, error } = useCategoryWebSocket(
-    "ws://localhost:8080/inventory-socket"
-  );
+export const Category: React.FC<{ wsState: WsState }> = ({ wsState }) => {
+  const { categories, isConnected, error } = wsState;
   const { sendRequest } = useCategoryApi();
   const [addCategoryItem, setAddCategoryItem] = useState<Category>({
     categoryId: undefined,
-    name: undefined,
+    categoryName: undefined,
   });
   const [modifyCategoryItem, setModifyCategoryItem] = useState<Category>({
     categoryId: undefined,
-    name: undefined,
+    categoryName: undefined,
   });
   const [deleteCategoryItem, setDeleteCategoryItem] = useState<Category>({
     categoryId: undefined,
@@ -37,13 +38,13 @@ export const Category: React.FC = () => {
       case "add":
         setAddCategoryItem({
           categoryId: 0,
-          name: "",
+          categoryName: "",
         });
         break;
       case "modify":
         setModifyCategoryItem({
           categoryId: 0,
-          name: "",
+          categoryName: "",
         });
         break;
       case "delete":
@@ -75,7 +76,13 @@ export const Category: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-4 ">
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Add New Category</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("add", addCategoryItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Category ID:
@@ -83,17 +90,18 @@ export const Category: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addCategoryItem.categoryId}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setAddCategoryItem({
-                      ...addCategoryItem,
-                      categoryId: Number(value),
-                    });
-                  }
-                }}
+                value={addCategoryItem.categoryId ?? ""}
+                onChange={(e) =>
+                  setAddCategoryItem({
+                    ...addCategoryItem,
+                    categoryId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  })
+                }
               />
             </div>
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
@@ -103,28 +111,37 @@ export const Category: React.FC = () => {
               <input
                 type="text"
                 required
+                pattern="[A-Za-z ]+"
+                title="Only letters and spaces are allowed"
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={addCategoryItem.name}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (nameRegex.test(value)) {
-                    setAddCategoryItem({ ...addCategoryItem, name: value });
-                  }
-                }}
+                value={addCategoryItem.categoryName ?? ""}
+                onChange={(e) =>
+                  setAddCategoryItem({
+                    ...addCategoryItem,
+                    categoryName: e.target.value,
+                  })
+                }
               />
             </div>
             <button
-              className="!bg-[#0052FF] text-white p-2 rounded-md w-full  disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={!addCategoryItem.name}
-              onClick={() => handleOnClick("add", addCategoryItem)}
+              type="submit"
+              className="!bg-[#0052FF] text-white p-2 rounded-md w-full
+    disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
             >
               Add Category
             </button>
-          </div>
+          </form>
         </div>
+
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Modify Existing Category</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("modify", modifyCategoryItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Category ID:
@@ -132,16 +149,17 @@ export const Category: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyCategoryItem.categoryId}
+                value={modifyCategoryItem.categoryId ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setModifyCategoryItem({
-                      ...modifyCategoryItem,
-                      categoryId: Number(value),
-                    });
-                  }
+                  setModifyCategoryItem({
+                    ...modifyCategoryItem,
+                    categoryId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -151,32 +169,37 @@ export const Category: React.FC = () => {
               </label>
               <input
                 type="text"
+                required
+                pattern="[A-Za-z ]+"
+                title="Only letters and spaces are allowed"
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={modifyCategoryItem.name}
+                value={modifyCategoryItem.categoryName}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (nameRegex.test(value)) {
-                    setModifyCategoryItem({
-                      ...modifyCategoryItem,
-                      name: value,
-                    });
-                  }
+                  setModifyCategoryItem({
+                    ...modifyCategoryItem,
+                    categoryName: e.target.value,
+                  });
                 }}
               />
             </div>
-
             <button
+              type="submit"
               className="!bg-[#0052FF] text-white p-2 rounded-md w-full  disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={!modifyCategoryItem.categoryId}
-              onClick={() => handleOnClick("modify", modifyCategoryItem)}
             >
               Modify Category
             </button>
-          </div>
+          </form>
         </div>
+
         <div className="flex flex-col gap-4 border-2 p-4 rounded-md w-full lg:w-1/3">
           <h2 className="text-white text-xl">Delete Category</h2>
-          <div className="flex flex-col gap-2">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnClick("delete", deleteCategoryItem);
+            }}
+          >
             <div className="grid grid-cols-[120px_1fr] items-center gap-3">
               <label className="text-white whitespace-nowrap">
                 Category ID:
@@ -184,28 +207,28 @@ export const Category: React.FC = () => {
               <input
                 type="number"
                 required
+                min={1}
                 className="p-2 rounded-md w-full border border-gray-300"
-                value={deleteCategoryItem.categoryId}
+                value={deleteCategoryItem.categoryId ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  if (numberRegex.test(value)) {
-                    setDeleteCategoryItem({
-                      ...deleteCategoryItem,
-                      categoryId: Number(value),
-                    });
-                  }
+                  setDeleteCategoryItem({
+                    ...deleteCategoryItem,
+                    categoryId:
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value),
+                  });
                 }}
               />
             </div>
             <button
+              type="submit"
               className="!bg-[#DC1C13] text-white p-2 rounded-md w-full 
              disabled:!bg-gray-400 disabled:!cursor-not-allowed disabled:!opacity-50"
-              disabled={!deleteCategoryItem.categoryId}
-              onClick={() => handleOnClick("delete", deleteCategoryItem)}
             >
               Delete Category
             </button>
-          </div>
+          </form>
         </div>
       </div>
       <div className="border-2 p-4">

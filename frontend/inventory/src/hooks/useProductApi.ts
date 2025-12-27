@@ -3,7 +3,7 @@ import { useState } from "react";
 
 interface Product {
   productId?: number;
-  name?: string;
+  productName?: string;
   quantity?: number;
   categoryId?: number;
   price?: number;
@@ -18,7 +18,7 @@ export const useProductApi = () => {
       switch (requestType) {
         case "add":
           await axios.post(`${BASE_URL}`, {
-            productName: product.name,
+            productName: product.productName,
             quantity: product.quantity,
             categoryId: product.categoryId,
             price: product.price,
@@ -26,7 +26,7 @@ export const useProductApi = () => {
           break;
         case "modify":
           await axios.put(`${BASE_URL}/${product.productId}`, {
-            productName: product.name,
+            productName: product.productName,
             quantity: product.quantity,
             categoryId: product.categoryId,
             price: product.price,

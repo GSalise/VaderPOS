@@ -77,6 +77,9 @@ public class ProductServiceImpl implements IProductService {
             throw new IllegalArgumentException("ProductDTO cannot be null");
         }
         Product product = convertToEntity(productDTO);
+        if(categoryRepository.findById(productDTO.categoryId()).isEmpty()){
+            throw new CategoryNotFoundException(productDTO.categoryId());
+        }
         Product savedProduct = productRepository.save(product);
         notifyChange(savedProduct.getProductId());
         return convertToDTO(savedProduct);
@@ -124,8 +127,8 @@ public class ProductServiceImpl implements IProductService {
         if (id == null) {
             throw new IllegalArgumentException("Product id cannot be null");
         }
+        notifyChange(id);
         productRepository.deleteById(id);
-        notifyChange(null);
     }
 
     @Override

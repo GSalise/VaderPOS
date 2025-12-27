@@ -12,10 +12,13 @@ import com.vaderpos.inventory.api.repository.ICategoryRepository;
 import com.vaderpos.inventory.exception.CategoryNotFoundException;
 import com.vaderpos.inventory.socket.ChangeListener;
 
+import com.vaderpos.inventory.api.repository.IProductRepository;
+
 @Service
 public class CategoryServiceImpl implements ICategoryService{
     
     private final ICategoryRepository categoryRepository;
+    private final IProductRepository productRepository;
 
     private ChangeListener changeListener;
 
@@ -30,8 +33,9 @@ public class CategoryServiceImpl implements ICategoryService{
         }
     }
 
-    public CategoryServiceImpl(ICategoryRepository categoryRepository) {
+    public CategoryServiceImpl(ICategoryRepository categoryRepository, IProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -89,8 +93,15 @@ public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         if (id == null) {
             throw new IllegalArgumentException("Category id cannot be null");
         }
-        categoryRepository.deleteById(id);
+
+        long productCount = productRepository.countByCategoryId(id);
+        if (productCount > 0) {
+            throw new IllegalStateException(
+                "Cannot delete category. It has " + productCount + " products associated with it."
+            );
+        }
         notifyChange(id);
+        categoryRepository.deleteById(id);
     }
 
     private CategoryDTO convertToDTO(ProductCategory productCategory) {
