@@ -23,6 +23,23 @@ function normalizeOrderProduct(raw) {
   return { orderId, productId, quantity, unitPriceAtOrder, totalPriceAtOrder }
 }
 
+// Normalize server/order objects
+function normalizeOrder(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const orderId = raw.orderId ?? raw.OrderId
+  const isCheckedOut = Boolean(raw.isCheckedOut ?? raw.checkedOut ?? raw.CheckedOut)
+  const isDeleted = Boolean(raw.deleted ?? raw.isDeleted ?? raw.Deleted)
+  const status = raw.status ?? raw.Status
+  return { orderId, isCheckedOut, isDeleted, status }
+}
+
+function isOrderClosed(order) {
+  if (!order) return false
+  if (order.isDeleted || order.isCheckedOut) return true
+  const s = String(order.status || '')
+  return /closed|completed|fulfilled|checked[_\s]?out/i.test(s)
+}
+
 export default function OrderProducts() {
   const [orderProducts, setOrderProducts] = useState([])
   const [orderId, setOrderId] = useState('')
@@ -84,6 +101,29 @@ export default function OrderProducts() {
     }
   })
 
+  // Listen to WebSocket order updates (remove rows on checkout/delete)
+  useWebSocketUpdates('order', (data) => {
+    // Seen payload: { type: 'orderUpdate', updateType: 'single', order: { OrderId, isCheckedOut, deleted } }
+    if (data.updateType === 'single' && data.order) {
+      const ord = normalizeOrder(data.order)
+      if (!ord) return
+      if (isOrderClosed(ord)) {
+        setOrderProducts(prev => prev.filter(op => op.orderId !== ord.orderId))
+      }
+      return
+    }
+
+    // Global snapshot: remove closed orders' rows
+    if (data.updateType === 'global' && Array.isArray(data.orders)) {
+      const closedIds = new Set(
+        data.orders.map(normalizeOrder).filter(o => o && isOrderClosed(o)).map(o => o.orderId)
+      )
+      if (closedIds.size > 0) {
+        setOrderProducts(prev => prev.filter(op => !closedIds.has(op.orderId)))
+      }
+    }
+  })
+
   async function addOrderProduct() {
     const oid = parseInt(orderId, 10)
     const pid = parseInt(productId, 10)
@@ -92,7 +132,7 @@ export default function OrderProducts() {
       return
     }
     try {
-      await OrderProductApi.addToOrder({ orderId: oid, productId: pid, quantity: 1 })
+      await OrderProductApi.addToOrder({ orderId, productId, quantity: 1 })
       setOrderId('')
       setProductId('')
       alert('Added!')
@@ -361,9 +401,9 @@ export default function OrderProducts() {
         <button onClick={addOrderProduct}>Add Product</button>
       </div>
 
-      <div className="row" style={{ marginTop: 8 }}>
+      {/* <div className="row" style={{ marginTop: 8 }}>
         <button onClick={subtractOrderProductQuantity}>Subtract Quantities</button>
-      </div>
+      </div> */}
 
       <table className="table">
         <thead>
