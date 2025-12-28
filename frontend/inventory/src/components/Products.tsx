@@ -16,9 +16,6 @@ interface WsState {
   error: string | null;
 }
 
-const nameRegex = /^[A-Za-z ]*$/;
-const numberRegex = /^[0-9]*$/;
-
 export const Products: React.FC<{ wsState: WsState }> = ({ wsState }) => {
   const { products, isConnected, error } = wsState;
   const { sendRequest } = useProductApi();
@@ -49,23 +46,23 @@ export const Products: React.FC<{ wsState: WsState }> = ({ wsState }) => {
     switch (actionType) {
       case "add":
         setAddProductItem({
-          productName: "",
-          quantity: 0,
-          categoryId: 0,
-          price: 0,
+          productName: undefined,
+          quantity: undefined,
+          categoryId: undefined,
+          price: undefined,
         });
         break;
       case "modify":
         setModifyProductItem({
-          productId: 0,
-          productName: "",
-          quantity: 0,
-          categoryId: 0,
-          price: 0,
+          productId: undefined,
+          productName: undefined,
+          quantity: undefined,
+          categoryId: undefined,
+          price: undefined,
         });
         break;
       case "delete":
-        setDeleteProductItem({ productId: 0 });
+        setDeleteProductItem({ productId: undefined });
         break;
       default:
         break;
