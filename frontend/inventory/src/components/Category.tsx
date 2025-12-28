@@ -37,18 +37,18 @@ export const Category: React.FC<{ wsState: WsState }> = ({ wsState }) => {
     switch (actionType) {
       case "add":
         setAddCategoryItem({
-          categoryId: 0,
-          categoryName: "",
+          categoryId: undefined,
+          categoryName: undefined,
         });
         break;
       case "modify":
         setModifyCategoryItem({
-          categoryId: 0,
-          categoryName: "",
+          categoryId: undefined,
+          categoryName: undefined,
         });
         break;
       case "delete":
-        setDeleteCategoryItem({ categoryId: 0 });
+        setDeleteCategoryItem({ categoryId: undefined });
         break;
       default:
         break;
